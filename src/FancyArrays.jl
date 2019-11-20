@@ -1,5 +1,6 @@
 module FancyArrays
 
-greet() = print("Hello World!")
+include("fixedvalue.jl")
+export FixedValueArray
 
 end # module
