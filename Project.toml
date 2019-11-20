@@ -1,0 +1,8 @@
+name = "FancyArrays"
+uuid = "2c62951c-9479-4435-88c8-614a84373d38"
+desc = "Fancy Arrays for Julia"
+authors = ["Thomas Kemmer <thomas@binaryden.de>"]
+version = "0.1.0"
+
+[compat]
+julia = "1"
