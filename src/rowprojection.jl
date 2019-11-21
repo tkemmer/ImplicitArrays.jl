@@ -2,7 +2,20 @@
 struct RowProjectionMatrix{T} <: AbstractArray{T, 2}
     base::AbstractArray{T, 2}
     rows::Vector{Int}
+
+    function RowProjectionMatrix{T}(
+        base::AbstractArray{T, 2},
+        rows::Vector{Int}
+    ) where T
+        @boundscheck _checkrowbounds(base, rows)
+        new(base, rows)
+    end
 end
+
+RowProjectionMatrix(
+    base::AbstractArray{T, 2},
+    rows::Vector{Int}
+) where T = RowProjectionMatrix{T}(base, rows)
 
 RowProjectionMatrix(
     base::AbstractArray{T, 2},
@@ -28,4 +41,13 @@ end
 ) where T
     @boundscheck checkbounds(M, I...)
     M.base[M.rows[I[1]], I[2]] = v
+end
+
+function _checkrowbounds(
+    base::AbstractArray{T, 2},
+    rows::Vector{Int}
+) where T
+    for row ∈ rows
+        checkbounds(base, row, :)
+    end
 end
