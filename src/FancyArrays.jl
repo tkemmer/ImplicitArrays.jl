@@ -1,7 +1,7 @@
 module FancyArrays
 
 include("fixedvalue.jl")
-export FixedValueArray
+export FixedValueArray, FixedValueDiagonal
 
 include("rowprojection.jl")
 export RowProjectionMatrix
