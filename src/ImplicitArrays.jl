@@ -1,4 +1,4 @@
-module FancyArrays
+module ImplicitArrays
 
 include("fixedvalue.jl")
 export FixedValueArray, FixedValueDiagonal

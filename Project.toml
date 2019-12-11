@@ -1,6 +1,6 @@
-name = "FancyArrays"
+name = "ImplicitArrays"
 uuid = "2c62951c-9479-4435-88c8-614a84373d38"
-desc = "Fancy Arrays for Julia"
+desc = "Implicit Arrays for Julia"
 authors = ["Thomas Kemmer <thomas@binaryden.de>"]
 version = "0.1.0"
 

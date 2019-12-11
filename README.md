@@ -1,1 +1,1 @@
-# Fancy Arrays for Julia
+# Implicit Arrays for Julia
