@@ -26,22 +26,16 @@ RowProjectionMatrix(
     M::RowProjectionMatrix{T}
 ) where T = (length(M.rows), size(M.base)[2])
 
-@inline function Base.getindex(
+@inline Base.getindex(
     M::RowProjectionMatrix{T},
     I::Vararg{Int, 2}
-) where T
-    @boundscheck checkbounds(M, I...)
-    M.base[M.rows[I[1]], I[2]]
-end
+) where T = Base.getindex(M.base, M.rows[I[1]], I[2])
 
-@inline function Base.setindex!(
+@inline Base.setindex!(
     M::RowProjectionMatrix{T},
     v::Any,
     I::Vararg{Int, 2}
-) where T
-    @boundscheck checkbounds(M, I...)
-    M.base[M.rows[I[1]], I[2]] = v
-end
+) where T = Base.setindex!(M.base, v, M.rows[I[1]], I[2])
 
 function _checkrowbounds(
     base::AbstractArray{T, 2},
