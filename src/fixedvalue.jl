@@ -27,17 +27,3 @@ end
 @inline function Base.setindex!(A::FixedValueArray, ::Any, ::Vararg{Int, N}) where N
     error("setindex! not defined for ", typeof(A))
 end
-
-
-# TODO
-struct FixedValueDiagonal{T} <: AbstractArray{T, 2}
-    val::T
-    dim::Int
-end
-
-@inline Base.size(A::FixedValueDiagonal{T}) where T = (A.dim, A.dim)
-
-@inline function Base.getindex(A::FixedValueDiagonal{T}, I::Vararg{Int, 2}) where T
-    @boundscheck checkbounds(A, I...)
-    I[1] == I[2] ? A.val : zero(T)
-end

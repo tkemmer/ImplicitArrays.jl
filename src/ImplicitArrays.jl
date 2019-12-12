@@ -1,7 +1,7 @@
 module ImplicitArrays
 
 include("fixedvalue.jl")
-export FixedValueArray, FixedValueDiagonal
+export FixedValueArray
 
 include("rowprojection.jl")
 export RowProjectionMatrix, RowProjectionVector
