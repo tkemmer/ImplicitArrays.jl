@@ -4,6 +4,6 @@ include("fixedvalue.jl")
 export FixedValueArray, FixedValueDiagonal
 
 include("rowprojection.jl")
-export RowProjectionMatrix
+export RowProjectionMatrix, RowProjectionVector
 
 end # module
