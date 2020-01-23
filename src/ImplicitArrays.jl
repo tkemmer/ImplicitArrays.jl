@@ -1,5 +1,8 @@
 module ImplicitArrays
 
+include("interaction.jl")
+export InteractionMatrix
+
 include("fixedvalue.jl")
 export FixedValueArray
 
