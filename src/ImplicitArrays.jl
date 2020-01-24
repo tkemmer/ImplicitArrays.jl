@@ -1,5 +1,8 @@
 module ImplicitArrays
 
+include("block.jl")
+export BlockMatrix
+
 include("interaction.jl")
 export InteractionMatrix
 
