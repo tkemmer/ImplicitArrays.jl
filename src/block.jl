@@ -6,7 +6,7 @@ struct BlockMatrix{T} <: AbstractArray{T, 2}
     function BlockMatrix{T}(
         blocks::Array{AbstractArray{T, 2}, 2}
     ) where T
-        bdims = (0, 0)
+        bdims = (1, 1)
         for (i, block) ∈ enumerate(blocks)
             i > 1 && @assert(
                 size(block) == bdims,
