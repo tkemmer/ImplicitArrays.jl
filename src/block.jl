@@ -18,27 +18,32 @@ struct BlockMatrix{T} <: AbstractArray{T, 2}
     end
 end
 
-BlockMatrix(
+@inline BlockMatrix(
     blocks::Array{AbstractArray{T, 2}, 2}
 ) where T = BlockMatrix{T}(blocks)
 
-function BlockMatrix(
+function BlockMatrix{T}(
+    rows::Int,
+    cols::Int,
+    blocks::Vararg{AbstractArray{T, 2}}
+) where T
+    @assert(
+        rows * cols == length(blocks),
+        "invalid number of blocks given (expected $(rows * cols), got $(length(blocks)))"
+    )
+    B = Array{AbstractArray{T, 2}, 2}(undef, rows, cols)
+    for (i, b) in enumerate(blocks)
+        B[Int(ceil(i/cols)), (i - 1) % cols + 1] = b
+    end
+    BlockMatrix(B)
+end
+
+@inline BlockMatrix(
     rows::Int,
     cols::Int,
     block::AbstractArray{T, 2},
     blocks::Vararg{AbstractArray{T, 2}}
-) where T
-    @assert(
-        rows * cols == length(blocks) + 1,
-        "invalid number of blocks given (expected $(rows * cols), got $(length(blocks)+1))"
-    )
-    B = Array{AbstractArray{T, 2}, 2}(undef, rows, cols)
-    B[1] = block
-    for (i, b) in enumerate(blocks)
-        B[Int(ceil((i+1)/cols)), i % cols + 1] = b
-    end
-    BlockMatrix(B)
-end
+) where T = BlockMatrix{T}(rows, cols, block, blocks...)
 
 @inline Base.size(
     M::BlockMatrix{T}
