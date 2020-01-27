@@ -35,7 +35,7 @@ function BlockMatrix(
     B = Array{AbstractArray{T, 2}, 2}(undef, rows, cols)
     B[1] = block
     for (i, b) in enumerate(blocks)
-        B[i+1] = b
+        B[Int(ceil((i+1)/cols)), i % cols + 1] = b
     end
     BlockMatrix(B)
 end
