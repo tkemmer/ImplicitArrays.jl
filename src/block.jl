@@ -35,7 +35,7 @@ function BlockMatrix{T}(
     for (i, b) in enumerate(blocks)
         B[Int(ceil(i/cols)), (i - 1) % cols + 1] = b
     end
-    BlockMatrix(B)
+    BlockMatrix{T}(B)
 end
 
 @inline BlockMatrix(
