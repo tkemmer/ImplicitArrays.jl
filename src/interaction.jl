@@ -1,7 +1,7 @@
 # TODO
 struct InteractionMatrix{T, R, C} <: AbstractArray{T, 2}
-    rowelems::AbstractArray{R, 1}
-    colelems::AbstractArray{C, 1}
+    rowelems::Array{R, 1}
+    colelems::Array{C, 1}
     interact::Function
 
     InteractionMatrix(
@@ -9,7 +9,7 @@ struct InteractionMatrix{T, R, C} <: AbstractArray{T, 2}
         rowelems::AbstractArray{R, 1},
         colelems::AbstractArray{C, 1},
         interact::Function
-    ) where {T, R, C} = new{T, R, C}(rowelems, colelems, interact)
+    ) where {T, R, C} = new{T, R, C}(collect(rowelems), collect(colelems), interact)
 end
 
 @inline Base.size(
