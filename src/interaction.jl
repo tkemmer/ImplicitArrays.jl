@@ -3,6 +3,11 @@ abstract type InteractionFunction{R, C, T} end
 #struct LDiv <: InteractionFunction{Int, Int, Float64} end
 #(::LDiv)(x::Int, y::Int) = x \ y
 
+struct ConstInteractionFunction{R, C, T} <: InteractionFunction{R, C, T}
+    val::T
+end
+(f::ConstInteractionFunction{R, C, T})(x::R, y::C) where {R, C, T} = f.val
+
 struct GenericInteractionFunction{R, C, T} <: InteractionFunction{R, C, T}
     f::Function
 end
@@ -31,6 +36,16 @@ end
     rowelems,
     colelems,
     GenericInteractionFunction{R, C, T}(interact)
+)
+
+@inline InteractionMatrix(
+    rowelems::AbstractArray{R, 1},
+    colelems::AbstractArray{C, 1},
+    val::T
+) where {T, R, C} = InteractionMatrix(
+    rowelems,
+    colelems,
+    ConstInteractionFunction{R, C, T}(val)
 )
 
 @inline Base.size(
