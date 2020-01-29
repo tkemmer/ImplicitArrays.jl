@@ -1,16 +1,37 @@
+abstract type InteractionFunction{R, C, T} end
+
+#struct LDiv <: InteractionFunction{Int, Int, Float64} end
+#(::LDiv)(x::Int, y::Int) = x \ y
+
+struct GenericInteractionFunction{R, C, T} <: InteractionFunction{R, C, T}
+    f::Function
+end
+(f::GenericInteractionFunction{R, C, T})(x::R, y::C) where {R, C, T} = f.f(x, y)::T
+
 # TODO
-struct InteractionMatrix{T, R, C} <: AbstractArray{T, 2}
+struct InteractionMatrix{T, R, C, F <: InteractionFunction{R, C, T}} <: AbstractArray{T, 2}
     rowelems::Array{R, 1}
     colelems::Array{C, 1}
-    interact::Function
+    interact::F
 
-    InteractionMatrix(
-        ::Type{T},
+    @inline function InteractionMatrix(
         rowelems::AbstractArray{R, 1},
         colelems::AbstractArray{C, 1},
-        interact::Function
-    ) where {T, R, C} = new{T, R, C}(collect(rowelems), collect(colelems), interact)
+        interact::F
+    ) where {T, R, C, F <: InteractionFunction{R, C, T}}
+        new{T, R, C, F}(collect(rowelems), collect(colelems), interact)
+    end
 end
+
+@inline InteractionMatrix{T}(
+    rowelems::AbstractArray{R, 1},
+    colelems::AbstractArray{C, 1},
+    interact::Function
+) where {T, R, C} = InteractionMatrix(
+    rowelems,
+    colelems,
+    GenericInteractionFunction{R, C, T}(interact)
+)
 
 @inline Base.size(
     A::InteractionMatrix{T}

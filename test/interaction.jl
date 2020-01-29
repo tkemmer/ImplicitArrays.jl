@@ -1,11 +1,11 @@
 @testset "empty matrix" begin
-    A = InteractionMatrix(Int, Int[], Int[], +)
+    A = InteractionMatrix{Int}(Int[], Int[], +)
     @test A isa AbstractArray{Int, 2}
     @test size(A) == (0, 0)
     @test_throws BoundsError A[]
     @test_throws BoundsError A[1]
 
-    A = InteractionMatrix(Float64, Int[], Int[], /)
+    A = InteractionMatrix{Float64}(Int[], Int[], /)
     @test A isa AbstractArray{Float64, 2}
     @test size(A) == (0, 0)
     @test_throws BoundsError A[]
@@ -13,13 +13,13 @@
 end
 
 @testset "no rowelems" begin
-    A = InteractionMatrix(Int, Int[], Int[42, 40, 47], +)
+    A = InteractionMatrix{Int}(Int[], Int[42, 40, 47], +)
     @test A isa AbstractArray{Int, 2}
     @test size(A) == (0, 3)
     @test_throws BoundsError A[]
     @test_throws BoundsError A[1]
 
-    A = InteractionMatrix(Float64, Int[], Int[42, 40, 47], /)
+    A = InteractionMatrix{Float64}(Int[], Int[42, 40, 47], /)
     @test A isa AbstractArray{Float64, 2}
     @test size(A) == (0, 3)
     @test_throws BoundsError A[]
@@ -27,13 +27,13 @@ end
 end
 
 @testset "no colelems" begin
-    A = InteractionMatrix(Int, Int[42, 40, 47], Int[], +)
+    A = InteractionMatrix{Int}(Int[42, 40, 47], Int[], +)
     @test A isa AbstractArray{Int, 2}
     @test size(A) == (3, 0)
     @test_throws BoundsError A[]
     @test_throws BoundsError A[1]
 
-    A = InteractionMatrix(Float64, Int[42, 40, 47], Int[], /)
+    A = InteractionMatrix{Float64}(Int[42, 40, 47], Int[], /)
     @test A isa AbstractArray{Float64, 2}
     @test size(A) == (3, 0)
     @test_throws BoundsError A[]
@@ -41,7 +41,7 @@ end
 end
 
 @testset "single value" begin
-    A = InteractionMatrix(Int, Int[2], Int[42], -)
+    A = InteractionMatrix{Int}(Int[2], Int[42], -)
     @test A isa AbstractArray{Int, 2}
     @test size(A) == (1, 1)
     @test A[] isa Int
@@ -58,20 +58,20 @@ end
     @test_throws ErrorException A[1] = 13
     @test_throws ErrorException A[1, 1] = 13
 
-    A = InteractionMatrix(Int, Int[42], Int[2], -)
+    A = InteractionMatrix{Int}(Int[42], Int[2], -)
     @test A[1] == 40
 
-    A = InteractionMatrix(Int, Int[42], Int[2], /)
+    A = InteractionMatrix{Int}(Int[42], Int[2], /)
     @test_throws TypeError A[1]
 
-    A = InteractionMatrix(Float64, Int[42], Int[2], /)
+    A = InteractionMatrix{Float64}(Int[42], Int[2], /)
     @test A isa AbstractArray{Float64, 2}
     @test A[1] isa Float64
     @test A[1] == 21.0
 end
 
 @testset "single rowelem" begin
-    A = InteractionMatrix(Int, Int[2], Int[42, 40, 47], -)
+    A = InteractionMatrix{Int}(Int[2], Int[42, 40, 47], -)
     @test A isa AbstractArray{Int, 2}
     @test size(A) == (1, 3)
     @test_throws BoundsError A[]
@@ -91,7 +91,7 @@ end
     @test_throws BoundsError A[1, 4]
     @test_throws BoundsError A[2, 1]
 
-    A = InteractionMatrix(Int, Int[2], Int[42, 40, 47], \)
+    A = InteractionMatrix{Int}(Int[2], Int[42, 40, 47], \)
     @test_throws TypeError A[1]
     @test_throws TypeError A[2]
     @test_throws TypeError A[3]
@@ -99,7 +99,7 @@ end
     @test_throws TypeError A[1, 2]
     @test_throws TypeError A[1, 3]
 
-    A = InteractionMatrix(Float64, Int[2], Int[42, 40,47], \)
+    A = InteractionMatrix{Float64}(Int[2], Int[42, 40,47], \)
     @test A[1] isa Float64
     @test A[1] == 21.0
     @test A[2] isa Float64
@@ -115,7 +115,7 @@ end
 end
 
 @testset "single colelem" begin
-    A = InteractionMatrix(Int, Int[42, 40, 47], Int[2], -)
+    A = InteractionMatrix{Int}(Int[42, 40, 47], Int[2], -)
     @test A isa AbstractArray{Int, 2}
     @test size(A) == (3, 1)
     @test_throws BoundsError A[]
@@ -135,7 +135,7 @@ end
     @test_throws BoundsError A[4, 1]
     @test_throws BoundsError A[1, 2]
 
-    A = InteractionMatrix(Int, Int[42, 40, 47], Int[2], /)
+    A = InteractionMatrix{Int}(Int[42, 40, 47], Int[2], /)
     @test_throws TypeError A[1]
     @test_throws TypeError A[2]
     @test_throws TypeError A[3]
@@ -143,7 +143,7 @@ end
     @test_throws TypeError A[2, 1]
     @test_throws TypeError A[3, 1]
 
-    A = InteractionMatrix(Float64, Int[42, 40,47], Int[2], /)
+    A = InteractionMatrix{Float64}(Int[42, 40,47], Int[2], /)
     @test A[1] isa Float64
     @test A[1] == 21.0
     @test A[2] isa Float64
@@ -159,7 +159,7 @@ end
 end
 
 @testset "ordinary" begin
-    A = InteractionMatrix(Int, Int[2, 5], Int[42, 40], -)
+    A = InteractionMatrix{Int}(Int[2, 5], Int[42, 40], -)
     @test A isa AbstractArray{Int, 2}
     @test size(A) == (2, 2)
     @test_throws BoundsError A[]
@@ -180,7 +180,7 @@ end
     @test A[2, 2] isa Int
     @test A[2, 2] == -35
 
-    A = InteractionMatrix(Int, Int[42, 40], Int[2, 5], -)
+    A = InteractionMatrix{Int}(Int[42, 40], Int[2, 5], -)
     @test A isa AbstractArray{Int, 2}
     @test size(A) == (2, 2)
     @test_throws BoundsError A[]
@@ -201,7 +201,7 @@ end
     @test A[2, 2] isa Int
     @test A[2, 2] == 35
 
-    A = InteractionMatrix(Int, Int[42, 40], Int[2, 5], /)
+    A = InteractionMatrix{Int}(Int[42, 40], Int[2, 5], /)
     @test_throws TypeError A[1]
     @test_throws TypeError A[2]
     @test_throws TypeError A[3]
@@ -211,7 +211,7 @@ end
     @test_throws TypeError A[1, 2]
     @test_throws TypeError A[2, 2]
 
-    A = InteractionMatrix(Float64, Int[42, 40], Int[2, 5], /)
+    A = InteractionMatrix{Float64}(Int[42, 40], Int[2, 5], /)
     @test A[1] isa Float64
     @test A[1] == 21.0
     @test A[2] isa Float64
