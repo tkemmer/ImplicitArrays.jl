@@ -20,17 +20,17 @@ struct InteractionMatrix{T, R, C, F <: InteractionFunction{R, C, T}} <: Abstract
     interact::F
 
     @inline function InteractionMatrix(
-        rowelems::AbstractArray{R, 1},
-        colelems::AbstractArray{C, 1},
+        rowelems::Array{R, 1},
+        colelems::Array{C, 1},
         interact::F
     ) where {T, R, C, F <: InteractionFunction{R, C, T}}
-        new{T, R, C, F}(collect(rowelems), collect(colelems), interact)
+        new{T, R, C, F}(rowelems, colelems, interact)
     end
 end
 
 @inline InteractionMatrix{T}(
-    rowelems::AbstractArray{R, 1},
-    colelems::AbstractArray{C, 1},
+    rowelems::Array{R, 1},
+    colelems::Array{C, 1},
     interact::Function
 ) where {T, R, C} = InteractionMatrix(
     rowelems,
@@ -39,8 +39,8 @@ end
 )
 
 @inline InteractionMatrix(
-    rowelems::AbstractArray{R, 1},
-    colelems::AbstractArray{C, 1},
+    rowelems::Array{R, 1},
+    colelems::Array{C, 1},
     val::T
 ) where {T, R, C} = InteractionMatrix(
     rowelems,
