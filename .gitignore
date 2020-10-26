@@ -3,4 +3,5 @@
 *.log
 *.o
 /Manifest.toml
-/doc/build
+/docs/build
+
