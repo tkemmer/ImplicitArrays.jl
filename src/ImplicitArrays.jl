@@ -4,7 +4,7 @@ include("block.jl")
 export BlockMatrix
 
 include("interaction.jl")
-export InteractionFunction, InteractionMatrix
+export ConstInteractionFunction, GenericInteractionFunction, InteractionFunction, InteractionMatrix
 
 include("fixedvalue.jl")
 export FixedValueArray
