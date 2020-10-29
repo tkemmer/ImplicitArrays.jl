@@ -99,7 +99,7 @@ julia> RowProjectionMatrix(M, [1, 3])
  10  20  30
  70  80  90
 
-julia> RowProjectionMatrix(M, [2, 3, 2])
+julia> RowProjectionMatrix(M, 2, 3, 2)
 3×3 RowProjectionMatrix{Int64}:
  40  50  60
  70  80  90
