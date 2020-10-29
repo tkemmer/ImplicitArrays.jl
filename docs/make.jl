@@ -17,3 +17,7 @@ makedocs(
     sitename  = "ImplicitArrays.jl",
     repo      = "https://github.com/tkemmer/implicitarrays.jl/tree/master{path}"
 )
+
+deploydocs(
+    repo = "github.com/tkemmer/implicitarrays.jl.git"
+)
