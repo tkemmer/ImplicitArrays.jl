@@ -1,4 +1,5 @@
 # Implicit arrays for Julia
+[![](https://img.shields.io/badge/docs-stable-blue.svg)](https://tkemmer.github.io/ImplicitArrays.jl/stable)
 [![](https://img.shields.io/badge/docs-dev-blue.svg)](https://tkemmer.github.io/ImplicitArrays.jl/dev)
 
 
