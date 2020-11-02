@@ -1,6 +1,7 @@
 # Implicit arrays for Julia
-[![](https://img.shields.io/badge/docs-stable-blue.svg)](https://tkemmer.github.io/ImplicitArrays.jl/stable)
-[![](https://img.shields.io/badge/docs-dev-blue.svg)](https://tkemmer.github.io/ImplicitArrays.jl/dev)
+[![](https://img.shields.io/github/license/tkemmer/ImplicitArrays.jl?style=for-the-badge)](https://github.com/tkemmer/ImplicitArrays.jl/blob/master/LICENSE)
+[![](https://img.shields.io/badge/docs-stable-blue.svg?style=for-the-badge)](https://tkemmer.github.io/ImplicitArrays.jl/stable)
+[![](https://img.shields.io/badge/docs-dev-blue.svg?style=for-the-badge)](https://tkemmer.github.io/ImplicitArrays.jl/dev)
 
 
 The `ImplicitArrays.jl` package provides multiple implicit array types for the [Julia](https://julialang.org) programming language.
@@ -13,7 +14,7 @@ This package version requires Julia 1.0 or above. In the Julia shell, switch to 
 `Pkg` shell by pressing `]` and enter the following command:
 
 ```sh
-pkg> add https://github.com/tkemmer/ImplicitArrays.jl
+pkg> add ImplicitArrays
 ```
 
 ## Testing
