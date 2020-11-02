@@ -15,7 +15,7 @@ makedocs(
     pages     = pages,
     format    = Documenter.HTML(),
     sitename  = "ImplicitArrays.jl",
-    repo      = "https://github.com/tkemmer/ImplicitArrays.jl/tree/master{path}"
+    repo      = "https://github.com/tkemmer/ImplicitArrays.jl/blob/master{path}"
 )
 
 deploydocs(
