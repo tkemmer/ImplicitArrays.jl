@@ -72,9 +72,9 @@ end
     @test_throws BoundsError A[1, 2]
     @test_throws BoundsError A[2, 1]
     @test_throws BoundsError A[2, 2]
-    @test_throws ErrorException A[] = 13
-    @test_throws ErrorException A[1] = 13
-    @test_throws ErrorException A[1, 1] = 13
+    @test_throws CanonicalIndexError A[] = 13
+    @test_throws CanonicalIndexError A[1] = 13
+    @test_throws CanonicalIndexError A[1, 1] = 13
 
     A = InteractionMatrix{Int}(Int[2], Int[42], -)
     @test A isa AbstractArray{Int, 2}
@@ -89,9 +89,9 @@ end
     @test_throws BoundsError A[1, 2]
     @test_throws BoundsError A[2, 1]
     @test_throws BoundsError A[2, 2]
-    @test_throws ErrorException A[] = 13
-    @test_throws ErrorException A[1] = 13
-    @test_throws ErrorException A[1, 1] = 13
+    @test_throws CanonicalIndexError A[] = 13
+    @test_throws CanonicalIndexError A[1] = 13
+    @test_throws CanonicalIndexError A[1, 1] = 13
 
     A = InteractionMatrix{Int}(Int[42], Int[2], -)
     @test A[1] == 40

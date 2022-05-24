@@ -1,5 +1,7 @@
 module ImplicitArrays
 
+include("compat.jl")
+
 include("block.jl")
 export BlockMatrix
 

@@ -150,4 +150,4 @@ end
     A::InteractionMatrix{T},
     ::Any,
     ::Int
-) where T = error("setindex! not defined for ", typeof(A))
+) where T = _throw_canonical_error("setindex! not defined for ", typeof(A))

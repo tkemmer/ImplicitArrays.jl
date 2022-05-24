@@ -42,9 +42,9 @@ end
     @test length(A) == 1
     @test_throws BoundsError A[0]
     @test A[] == Nothing
-    @test_throws ErrorException A[] = Nothing
+    @test_throws CanonicalIndexError A[] = Nothing
     @test A[1] == Nothing
-    @test_throws ErrorException A[1] = Nothing
+    @test_throws CanonicalIndexError A[1] = Nothing
     @test_throws BoundsError A[2]
 end
 
@@ -54,18 +54,18 @@ end
     @test size(A) == (3,)
     @test length(A) == 3
     @test_throws BoundsError A[]
-    @test_throws ErrorException A[] = 41
+    @test_throws CanonicalIndexError A[] = 41
     @test_throws BoundsError A[0]
-    @test_throws ErrorException A[0] = 41
+    @test_throws CanonicalIndexError A[0] = 41
     for e ∈ A
         @test e == 42
     end
     for i ∈ 1:length(A)
         @test A[i] == 42
-        @test_throws ErrorException A[i] = 41
+        @test_throws CanonicalIndexError A[i] = 41
     end
     @test_throws BoundsError A[4]
-    @test_throws ErrorException A[4] = 41
+    @test_throws CanonicalIndexError A[4] = 41
 end
 
 @testset "2-dimensional arrays" begin
@@ -74,28 +74,28 @@ end
     @test size(A) == (2, 3)
     @test length(A) == 6
     @test_throws BoundsError A[]
-    @test_throws ErrorException A[] = 41
+    @test_throws CanonicalIndexError A[] = 41
     @test_throws BoundsError A[0]
-    @test_throws ErrorException A[0] = 41
+    @test_throws CanonicalIndexError A[0] = 41
     @test_throws BoundsError A[0, 1]
-    @test_throws ErrorException A[0, 1] = 41
+    @test_throws CanonicalIndexError A[0, 1] = 41
     @test_throws BoundsError A[1, 0]
-    @test_throws ErrorException A[1, 0] = 41
+    @test_throws CanonicalIndexError A[1, 0] = 41
     for e ∈ A
         @test e == 42
     end
     for i ∈ 1:length(A)
         @test A[i] == 42
-        @test_throws ErrorException A[i] = 41
+        @test_throws CanonicalIndexError A[i] = 41
     end
     for i ∈ 1:size(A)[1], j ∈ 1:size(A)[2]
         @test A[i, j] == 42
-        @test_throws ErrorException A[i, j] = 42
+        @test_throws CanonicalIndexError A[i, j] = 42
     end
     @test_throws BoundsError A[7]
-    @test_throws ErrorException A[7] = 41
+    @test_throws CanonicalIndexError A[7] = 41
     @test_throws BoundsError A[3, 1]
-    @test_throws ErrorException A[0, 1] = 41
+    @test_throws CanonicalIndexError A[0, 1] = 41
     @test_throws BoundsError A[1, 4]
-    @test_throws ErrorException A[1, 0] = 41
+    @test_throws CanonicalIndexError A[1, 0] = 41
 end

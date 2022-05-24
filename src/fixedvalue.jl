@@ -52,11 +52,11 @@ end
 end
 
 @inline function Base.setindex!(A::FixedValueArray{T, N}, ::Any, ::Int) where {T, N}
-    error("setindex! not defined for ", typeof(A))
+    _throw_canonical_error("setindex! not defined for ", typeof(A))
 end
 
-# This one is required to have setindex! at index [] throw an ErrorException instead
+# This one is required to have setindex! at index [] throw an CanonicalIndexError instead
 # of a BoundsError (which is used for all other indices).
 @inline function Base.setindex!(A::FixedValueArray, ::Any, ::Vararg{Int, N}) where N
-    error("setindex! not defined for ", typeof(A))
+    _throw_canonical_error("setindex! not defined for ", typeof(A))
 end
