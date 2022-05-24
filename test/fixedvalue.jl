@@ -50,7 +50,7 @@ end
 
 @testset "1-dimensional arrays" begin
     A = FixedValueArray(42, 3)
-    @test A isa FixedValueArray{Int64, 1}
+    @test A isa FixedValueArray{Int, 1}
     @test size(A) == (3,)
     @test length(A) == 3
     @test_throws BoundsError A[]
@@ -70,7 +70,7 @@ end
 
 @testset "2-dimensional arrays" begin
     A = FixedValueArray(42, 2, 3)
-    @test A isa FixedValueArray{Int64, 2}
+    @test A isa FixedValueArray{Int, 2}
     @test size(A) == (2, 3)
     @test length(A) == 6
     @test_throws BoundsError A[]
