@@ -81,13 +81,13 @@ as a replacement for a two-dimensional [`FixedValueArray`](@ref).
 # Examples
 ```jldoctest; setup = :(using ImplicitArrays)
 julia> InteractionMatrix{Int64}([1, 2, 3], [10, 20, 30], +)
-3×3 InteractionMatrix{Int64,Int64,Int64,GenericInteractionFunction{Int64,Int64,Int64}}:
+3×3 InteractionMatrix{Int64, Int64, Int64, GenericInteractionFunction{Int64, Int64, Int64}}:
  11  21  31
  12  22  32
  13  23  33
 
 julia> InteractionMatrix([1, 2, 3], [10, 20, 30], 42)
-3×3 InteractionMatrix{Int64,Int64,Int64,ConstInteractionFunction{Int64,Int64,Int64}}:
+3×3 InteractionMatrix{Int64, Int64, Int64, ConstInteractionFunction{Int64, Int64, Int64}}:
  42  42  42
  42  42  42
  42  42  42
@@ -97,7 +97,7 @@ julia> struct DivFun <: InteractionFunction{Int, Int, Float64} end
 julia> (::DivFun)(x::Int, y::Int) = x / y
 
 julia> InteractionMatrix([10, 20, 30], [5, 2, 1], DivFun())
-3×3 InteractionMatrix{Float64,Int64,Int64,DivFun}:
+3×3 InteractionMatrix{Float64, Int64, Int64, DivFun}:
  2.0   5.0  10.0
  4.0  10.0  20.0
  6.0  15.0  30.0
