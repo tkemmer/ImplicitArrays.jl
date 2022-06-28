@@ -18,6 +18,7 @@ makedocs(
     repo      = "https://github.com/tkemmer/ImplicitArrays.jl/blob/master{path}"
 )
 
-deploydocs(
-    repo = "github.com/tkemmer/ImplicitArrays.jl.git"
+deploydocs(;
+    repo = "github.com/tkemmer/ImplicitArrays.jl.git",
+    devbranch = "master"
 )
