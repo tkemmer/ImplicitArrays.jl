@@ -11,7 +11,7 @@ The `ImplicitArrays.jl` package provides multiple implicit array types for the [
 A full list of implicit array types provided by this package (along with code examples) is available in the [documentation](https://tkemmer.github.io/ImplicitArrays.jl/dev).
 
 ## Installation
-This package version requires Julia 1.0 or above. In the Julia shell, switch to the
+This package version requires Julia 1.6 or above. In the Julia shell, switch to the
 `Pkg` shell by pressing `]` and enter the following command:
 
 ```sh
