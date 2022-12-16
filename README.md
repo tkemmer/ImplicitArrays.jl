@@ -1,5 +1,5 @@
 # Implicit arrays for Julia
-[![](https://img.shields.io/github/workflow/status/tkemmer/ImplicitArrays.jl/CI?style=for-the-badge)](https://github.com/tkemmer/ImplicitArrays.jl/actions/workflows/CI.yml)
+[![](https://img.shields.io/github/actions/workflow/status/tkemmer/ImplicitArrays.jl/CI.yml?branch=master&style=for-the-badge)](https://github.com/tkemmer/ImplicitArrays.jl/actions/workflows/CI.yml)
 [![](https://img.shields.io/github/license/tkemmer/ImplicitArrays.jl?style=for-the-badge)](https://github.com/tkemmer/ImplicitArrays.jl/blob/master/LICENSE)
 [![](https://img.shields.io/badge/docs-stable-blue.svg?style=for-the-badge)](https://tkemmer.github.io/ImplicitArrays.jl/stable)
 [![](https://img.shields.io/badge/docs-dev-blue.svg?style=for-the-badge)](https://tkemmer.github.io/ImplicitArrays.jl/dev)
