@@ -4,4 +4,5 @@ Manifest.toml
 *.jl.cov
 *.jl.mem
 *.swp
-/docs/build
+/.vscode/
+/docs/build/
