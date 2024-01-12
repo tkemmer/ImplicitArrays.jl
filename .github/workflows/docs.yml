@@ -6,6 +6,7 @@ on:
     paths:
       - '**.jl'
       - 'docs/src/**.md'
+      - 'Project.toml'
     tags: '*'
   workflow_dispatch:
 jobs:
