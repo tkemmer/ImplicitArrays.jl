@@ -14,7 +14,7 @@ end
 
 @testset "single row" begin
     v = [1, 2, 3]
-    for row ∈ 1:length(v)
+    for row ∈ eachindex(v)
         u = RowProjectionVector(v, row)
         @test u isa RowProjectionVector{Int}
         @test size(u) == (1,)
@@ -32,7 +32,7 @@ end
     end
 
     M = [1 2 3; 4 5 6; 7 8 9]
-    for row ∈ 1:size(M, 1)
+    for row ∈ axes(M, 1)
         A = RowProjectionMatrix(M, row)
         @test A isa RowProjectionMatrix{Int}
         @test size(A) == (1, size(M, 2))
@@ -41,7 +41,7 @@ end
         @test_throws BoundsError A[] = 41
         @test_throws BoundsError A[0]
         @test_throws BoundsError A[0] = 41
-        for col ∈ 1:size(M, 2)
+        for col ∈ axes(M, 2)
             @test A[col] == M[row, col]
             @test A[1, col] == M[row, col]
 
@@ -143,7 +143,7 @@ end
     @test_throws BoundsError u[0]
     @test_throws BoundsError u[0] = 41
     @test u == v
-    for row in 1:length(v)
+    for row in eachindex(v)
         u[row] = 10 + row
         @test u[row] == 10 + row
         @test v[row] == 10 + row
@@ -162,8 +162,8 @@ end
     @test_throws BoundsError A[0]
     @test_throws BoundsError A[0] = 41
     @test A == M
-    for row ∈ 1:size(M, 1)
-        for col ∈ 1:size(M, 2)
+    for row ∈ axes(M, 1)
+        for col ∈ axes(M, 2)
             @test A[row, col] == M[row, col]
 
             A[row, col] = 10 + row + col

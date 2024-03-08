@@ -60,7 +60,7 @@ end
     for e ∈ A
         @test e == 42
     end
-    for i ∈ 1:length(A)
+    for i ∈ eachindex(A)
         @test A[i] == 42
         @test_throws CanonicalIndexError A[i] = 41
     end
@@ -84,11 +84,11 @@ end
     for e ∈ A
         @test e == 42
     end
-    for i ∈ 1:length(A)
+    for i ∈ eachindex(A)
         @test A[i] == 42
         @test_throws CanonicalIndexError A[i] = 41
     end
-    for i ∈ 1:size(A)[1], j ∈ 1:size(A)[2]
+    for i ∈ axes(A, 1), j ∈ axes(A, 2)
         @test A[i, j] == 42
         @test_throws CanonicalIndexError A[i, j] = 42
     end
