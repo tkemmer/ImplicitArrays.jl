@@ -60,6 +60,8 @@ end
     rows::Vararg{Int}
 ) = RowProjectionVector(base, collect(rows))
 
+@inline Base.IndexStyle(::Type{<: RowProjectionVector}) = IndexLinear()
+
 @inline Base.size(
     M::RowProjectionVector
 ) = (length(M.rows),)
