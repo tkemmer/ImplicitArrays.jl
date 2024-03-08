@@ -26,7 +26,7 @@ julia> f(1.0, 1.5)
 struct ConstInteractionFunction{R, C, T} <: InteractionFunction{R, C, T}
     val::T
 end
-(f::ConstInteractionFunction{R, C, T})(x::R, y::C) where {R, C, T} = f.val
+@inline (f::ConstInteractionFunction{R, C})(::R, ::C) where {R, C} = f.val
 
 """
     GenericInteractionFunction{R, C, T} <: InteractionFunction{R, C, T}
@@ -57,7 +57,7 @@ julia> h = GenericInteractionFunction{String, Int64, String}(repeat); h("abc", 3
 struct GenericInteractionFunction{R, C, T} <: InteractionFunction{R, C, T}
     f::Function
 end
-(f::GenericInteractionFunction{R, C, T})(x::R, y::C) where {R, C, T} = f.f(x, y)::T
+@inline (f::GenericInteractionFunction{R, C, T})(x::R, y::C) where {R, C, T} = f.f(x, y)::T
 
 """
     InteractionMatrix{T, R, C, F <: InteractionFunction{R, C, T}} <: AbstractArray{T, 2}
@@ -138,8 +138,8 @@ end
 )
 
 @inline Base.size(
-    A::InteractionMatrix{T}
-) where T = (length(A.rowelems), length(A.colelems))
+    A::InteractionMatrix
+) = (length(A.rowelems), length(A.colelems))
 
 @inline Base.getindex(
     A::InteractionMatrix{T},
@@ -147,7 +147,7 @@ end
 ) where T = A.interact(A.rowelems[I[1]], A.colelems[I[2]])::T
 
 @inline Base.setindex!(
-    A::InteractionMatrix{T},
+    A::InteractionMatrix,
     ::Any,
     ::Int
-) where T = _throw_canonical_error("setindex!", typeof(A))
+) = _throw_canonical_error("setindex!", typeof(A))
