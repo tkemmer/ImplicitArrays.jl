@@ -81,23 +81,23 @@ end
 ) where T = BlockMatrix{T}(rows, cols, block, blocks...)
 
 @inline Base.size(
-    M::BlockMatrix{T}
-) where T = M.bdims .* size(M.blocks)
+    M::BlockMatrix
+) = M.bdims .* size(M.blocks)
 
 @inline Base.getindex(
-    M::BlockMatrix{T},
+    M::BlockMatrix,
     I::Vararg{Int, 2}
-) where T = Base.getindex(
+) = getindex(
     M.blocks[Int(ceil(I[1]/M.bdims[1])), Int(ceil(I[2]/M.bdims[2]))],
     (I[1] - 1) % M.bdims[1] + 1,
     (I[2] - 1) % M.bdims[2] + 1
 )
 
 @inline Base.setindex!(
-    M::BlockMatrix{T},
+    M::BlockMatrix,
     v::Any,
     I::Vararg{Int, 2}
-) where T = Base.setindex!(
+) = setindex!(
     M.blocks[Int(ceil(I[1]/M.bdims[1])), Int(ceil(I[2]/M.bdims[2]))],
     v,
     (I[1] - 1) % M.bdims[1] + 1,
