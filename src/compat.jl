@@ -3,11 +3,11 @@
     https://github.com/JuliaLang/julia/pull/43852
 =#
 
-function _throw_canonical_error(msg::String, T::Type)
+function _throw_canonical_error(fun::String, T::Type)
     @static if isdefined(Base, :CanonicalIndexError)
-        throw(CanonicalIndexError(msg, T))
+        throw(CanonicalIndexError(fun, T))
     else
-        error(msg, T)
+        error("$fun not defined for $T")
     end
 end
 
