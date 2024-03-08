@@ -17,13 +17,13 @@ Create a new row-projected vector from the given `base` vector and a list or seq
 julia> v = [10, 20, 30, 40, 50];
 
 julia> RowProjectionVector(v, [1, 3, 5])
-3-element RowProjectionVector{Int64}:
+3-element RowProjectionVector{Int64, Vector{Int64}}:
  10
  30
  50
 
 julia> RowProjectionVector(v, 2, 3, 2)
-3-element RowProjectionVector{Int64}:
+3-element RowProjectionVector{Int64, Vector{Int64}}:
  20
  30
  20
@@ -35,45 +35,45 @@ julia> RowProjectionVector(v, 2, 3, 2)
     caution is advised when changing elements of rows that are contained multiple times
     in the projection, in order to avoid unwanted side effects.
 """
-struct RowProjectionVector{T} <: AbstractArray{T, 1}
+struct RowProjectionVector{T, A <: AbstractArray{T, 1}} <: AbstractArray{T, 1}
     "Base vector from which the projection is created"
-    base::AbstractArray{T, 1}
+    base::A
     "Rows used for the projection"
     rows::Vector{Int}
 
-    function RowProjectionVector{T}(
-        base::AbstractArray{T, 1},
+    function RowProjectionVector{T, A}(
+        base::A,
         rows::Vector{Int}
-    ) where T
+    ) where {T, A <: AbstractArray{T, 1}}
         @boundscheck _checkrowbounds(base, rows)
         new(base, rows)
     end
 end
 
-RowProjectionVector(
-    base::AbstractArray{T, 1},
+@inline RowProjectionVector(
+    base::A,
     rows::Vector{Int}
-) where T = RowProjectionVector{T}(base, rows)
+) where {T, A <: AbstractArray{T, 1}} = RowProjectionVector{T, A}(base, rows)
 
-RowProjectionVector(
-    base::AbstractArray{T, 1},
-    rows::Vararg{Int, N}
-) where {T, N} = RowProjectionVector(base, collect(rows))
+@inline RowProjectionVector(
+    base::AbstractVector,
+    rows::Vararg{Int}
+) = RowProjectionVector(base, collect(rows))
 
 @inline Base.size(
-    M::RowProjectionVector{T}
-) where T = (length(M.rows),)
+    M::RowProjectionVector
+) = (length(M.rows),)
 
 @inline Base.getindex(
-    M::RowProjectionVector{T},
+    M::RowProjectionVector,
     i::Int
-) where T = Base.getindex(M.base, M.rows[i])
+) = getindex(M.base, getindex(M.rows, i))
 
 @inline Base.setindex!(
-    M::RowProjectionVector{T},
+    M::RowProjectionVector,
     v::Any,
     i::Int
-) where T = Base.setindex!(M.base, v, M.rows[i])
+) = setindex!(M.base, v, getindex(M.rows, i))
 
 
 """
@@ -95,12 +95,12 @@ Create a new row-projected matrix from the given `base` matrix and a list or seq
 julia> M = [10 20 30; 40 50 60; 70 80 90];
 
 julia> RowProjectionMatrix(M, [1, 3])
-2×3 RowProjectionMatrix{Int64}:
+2×3 RowProjectionMatrix{Int64, Matrix{Int64}}:
  10  20  30
  70  80  90
 
 julia> RowProjectionMatrix(M, 2, 3, 2)
-3×3 RowProjectionMatrix{Int64}:
+3×3 RowProjectionMatrix{Int64, Matrix{Int64}}:
  40  50  60
  70  80  90
  40  50  60
@@ -112,50 +112,50 @@ julia> RowProjectionMatrix(M, 2, 3, 2)
     caution is advised when changing elements of rows that are contained multiple times
     in the projection, in order to avoid unwanted side effects.
 """
-struct RowProjectionMatrix{T} <: AbstractArray{T, 2}
+struct RowProjectionMatrix{T, A <: AbstractArray{T, 2}} <: AbstractArray{T, 2}
     "Base matrix from which the projection is created"
-    base::AbstractArray{T, 2}
+    base::A
     "Rows used for the projection"
     rows::Vector{Int}
 
-    function RowProjectionMatrix{T}(
-        base::AbstractArray{T, 2},
+    function RowProjectionMatrix{T, A}(
+        base::A,
         rows::Vector{Int}
-    ) where T
+    ) where {T, A <: AbstractArray{T, 2}}
         @boundscheck _checkrowbounds(base, rows)
         new(base, rows)
     end
 end
 
-RowProjectionMatrix(
-    base::AbstractArray{T, 2},
+@inline RowProjectionMatrix(
+    base::A,
     rows::Vector{Int}
-) where T = RowProjectionMatrix{T}(base, rows)
+) where {T, A <: AbstractArray{T, 2}} = RowProjectionMatrix{T, A}(base, rows)
 
-RowProjectionMatrix(
-    base::AbstractArray{T, 2},
-    rows::Vararg{Int, N}
-) where {T, N} = RowProjectionMatrix(base, collect(rows))
+@inline RowProjectionMatrix(
+    base::AbstractMatrix,
+    rows::Vararg{Int}
+) = RowProjectionMatrix(base, collect(rows))
 
 @inline Base.size(
-    M::RowProjectionMatrix{T}
-) where T = (length(M.rows), size(M.base)[2])
+    M::RowProjectionMatrix
+) = (length(M.rows), size(M.base, 2))
 
 @inline Base.getindex(
-    M::RowProjectionMatrix{T},
+    M::RowProjectionMatrix,
     I::Vararg{Int, 2}
-) where T = Base.getindex(M.base, M.rows[I[1]], I[2])
+) = getindex(M.base, getindex(M.rows, I[1]), I[2])
 
 @inline Base.setindex!(
-    M::RowProjectionMatrix{T},
+    M::RowProjectionMatrix,
     v::Any,
     I::Vararg{Int, 2}
-) where T = Base.setindex!(M.base, v, M.rows[I[1]], I[2])
+) = setindex!(M.base, v, getindex(M.rows, I[1]), I[2])
 
-function _checkrowbounds(
-    base::Union{AbstractArray{T, 1}, AbstractArray{T, 2}},
+@inline function _checkrowbounds(
+    base::AbstractArray,
     rows::Vector{Int}
-) where T
+)
     for row ∈ rows
         checkbounds(base, row, :)
     end
