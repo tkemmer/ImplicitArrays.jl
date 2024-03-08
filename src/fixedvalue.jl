@@ -37,11 +37,11 @@ struct FixedValueArray{T, N} <: AbstractArray{T, N}
     dims::NTuple{N, Int}
 end
 
-FixedValueArray(val::T, dims::Int...) where T = FixedValueArray(val, dims)
+@inline FixedValueArray(val::Any, dims::Int...) = FixedValueArray(val, dims)
 
-@inline Base.size(A::FixedValueArray{T, N}) where {T, N} = A.dims
+@inline Base.size(A::FixedValueArray) = A.dims
 
-@inline function Base.getindex(A::FixedValueArray{T, N}, i::Int) where {T, N}
+@inline function Base.getindex(A::FixedValueArray, i::Int)
     @boundscheck checkbounds(A, i)
     A.val
 end
@@ -51,12 +51,12 @@ end
     A.val
 end
 
-@inline function Base.setindex!(A::FixedValueArray{T, N}, ::Any, ::Int) where {T, N}
+@inline function Base.setindex!(A::FixedValueArray, ::Any, ::Int)
     _throw_canonical_error("setindex! not defined for ", typeof(A))
 end
 
-# This one is required to have setindex! at index [] throw an CanonicalIndexError instead
+# This one is required to have setindex! at index [] throw a CanonicalIndexError instead
 # of a BoundsError (which is used for all other indices).
-@inline function Base.setindex!(A::FixedValueArray, ::Any, ::Vararg{Int, N}) where N
+@inline function Base.setindex!(A::FixedValueArray, ::Any, ::Vararg{Int})
     _throw_canonical_error("setindex! not defined for ", typeof(A))
 end
