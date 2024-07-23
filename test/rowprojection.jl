@@ -5,6 +5,35 @@
         @test_throws BoundsError RowProjectionVector(v, 4)
     end
 
+    @testset "empty projection" begin
+        v = [1, 2, 3]
+        u = RowProjectionVector(v, Int[])
+        @test u isa RowProjectionVector{Int}
+        @test size(u) == (0,)
+        @test length(u) == 0
+        @test_throws BoundsError u[]
+        @test_throws BoundsError u[] = 41
+        @test_throws BoundsError u[0]
+        @test_throws BoundsError u[0] = 41
+        @test_throws BoundsError u[1]
+        @test_throws BoundsError u[1] = 41
+        @test_throws BoundsError u[2]
+        @test_throws BoundsError u[2] = 41
+
+        u = RowProjectionVector(v)
+        @test u isa RowProjectionVector{Int}
+        @test size(u) == (0,)
+        @test length(u) == 0
+        @test_throws BoundsError u[]
+        @test_throws BoundsError u[] = 41
+        @test_throws BoundsError u[0]
+        @test_throws BoundsError u[0] = 41
+        @test_throws BoundsError u[1]
+        @test_throws BoundsError u[1] = 41
+        @test_throws BoundsError u[2]
+        @test_throws BoundsError u[2] = 41
+    end
+
     @testset "single row" begin
         v = [1, 2, 3]
         for row ∈ eachindex(v)
@@ -89,6 +118,39 @@ end
         @test_throws BoundsError RowProjectionMatrix(M, 4)
         @test_throws BoundsError RowProjectionMatrix(M, 1, 4)
         @test_throws BoundsError RowProjectionMatrix(M, 4, 1)
+    end
+
+    @testset "empty projection" begin
+        M = [1 2 3; 4 5 6; 7 8 9]
+        A = RowProjectionMatrix(M, Int[])
+        @test A isa RowProjectionMatrix{Int}
+        @test size(A) == (0, size(M, 2))
+        @test length(A) == 0
+        @test_throws BoundsError A[]
+        @test_throws BoundsError A[] = 41
+        @test_throws BoundsError A[0]
+        @test_throws BoundsError A[0] = 41
+        @test_throws BoundsError A[1]
+        @test_throws BoundsError A[1] = 41
+        @test_throws BoundsError A[1, 1]
+        @test_throws BoundsError A[1, 1] = 41
+        @test_throws BoundsError A[2]
+        @test_throws BoundsError A[2] = 41
+
+        A = RowProjectionMatrix(M)
+        @test A isa RowProjectionMatrix{Int}
+        @test size(A) == (0, size(M, 2))
+        @test length(A) == 0
+        @test_throws BoundsError A[]
+        @test_throws BoundsError A[] = 41
+        @test_throws BoundsError A[0]
+        @test_throws BoundsError A[0] = 41
+        @test_throws BoundsError A[1]
+        @test_throws BoundsError A[1] = 41
+        @test_throws BoundsError A[1, 1]
+        @test_throws BoundsError A[1, 1] = 41
+        @test_throws BoundsError A[2]
+        @test_throws BoundsError A[2] = 41
     end
 
     @testset "single row" begin

@@ -58,7 +58,7 @@ end
 @inline RowProjectionVector(
     base::AbstractVector,
     rows::Vararg{Int}
-) = RowProjectionVector(base, collect(rows))
+) = RowProjectionVector(base, collect(Int, rows))
 
 @inline Base.IndexStyle(::Type{<: RowProjectionVector}) = IndexLinear()
 
@@ -137,7 +137,7 @@ end
 @inline RowProjectionMatrix(
     base::AbstractMatrix,
     rows::Vararg{Int}
-) = RowProjectionMatrix(base, collect(rows))
+) = RowProjectionMatrix(base, collect(Int, rows))
 
 @inline Base.size(
     M::RowProjectionMatrix
