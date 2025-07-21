@@ -141,10 +141,16 @@ end
     A::InteractionMatrix
 ) = (length(A.rowelems), length(A.colelems))
 
-@inline Base.getindex(
-    A::InteractionMatrix{T},
-    I::Vararg{Int, 2}
-) where T = A.interact(A.rowelems[I[1]], A.colelems[I[2]])::T
+@inline function Base.getindex(A::InteractionMatrix, I...; kwargs...)
+    @boundscheck checkbounds(A, I...)
+    @inbounds _getindex(A, to_indices(A, I)...; kwargs...)
+end
+
+@inline _getindex(A::InteractionMatrix; kwargs...) = _getindex(A, 1, 1; kwargs...)
+@inline _getindex(A::InteractionMatrix, i::Integer; kwargs...) = _getindex(A, Tuple(CartesianIndices(A)[i])...; kwargs...)
+@inline _getindex(A::InteractionMatrix{T}, I::AbstractArray; kwargs...) where T = collect(T, getindex(A, i; kwargs...) for i in I)
+@inline _getindex(A::InteractionMatrix{T}, i::Integer, j::Integer; kwargs...) where T = A.interact(A.rowelems[i], A.colelems[j]; kwargs...)::T
+@inline _getindex(A::InteractionMatrix{T}, I::AbstractVector, J::AbstractVector; kwargs...) where T = collect(T, _getindex(A, i, j; kwargs...) for i in I, j in J)
 
 @inline Base.setindex!(
     A::InteractionMatrix,

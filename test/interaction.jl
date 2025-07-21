@@ -12,6 +12,11 @@
     end
     (f::StatefulFun{T})(r::Int, c::T) where T = f.α * (r * r + c)
 
+    struct KwargsFun{T <: AbstractFloat} <: InteractionFunction{Int, T, T}
+        α::T
+    end
+    (f::KwargsFun{T})(r::Int, c::T; α::T = f.α) where T = α * (r * r + c)
+
     @testset "empty matrix" begin
         A = InteractionMatrix(Int[], Int[], 11)
         @test A isa AbstractArray{Int, 2}
@@ -48,6 +53,14 @@
         @test size(A) == (0, 0)
         @test_throws BoundsError A[]
         @test_throws BoundsError A[1]
+
+        A = InteractionMatrix(Int[], Float64[], KwargsFun{Float64}(2.0))
+        @test A isa AbstractArray{Float64, 2}
+        @test size(A) == (0, 0)
+        @test_throws BoundsError A[]
+        @test_throws BoundsError A[1]
+        @test_throws BoundsError getindex(A; α = 3.0)
+        @test_throws BoundsError getindex(A, 1; α = 3.0)
     end
 
     @testset "no rowelems" begin
@@ -86,6 +99,14 @@
         @test size(A) == (0, 3)
         @test_throws BoundsError A[]
         @test_throws BoundsError A[1]
+
+        A = InteractionMatrix(Int[], Float64[42, 40, 47], KwargsFun{Float64}(2.0))
+        @test A isa AbstractArray{Float64, 2}
+        @test size(A) == (0, 3)
+        @test_throws BoundsError A[]
+        @test_throws BoundsError A[1]
+        @test_throws BoundsError getindex(A; α = 3.0)
+        @test_throws BoundsError getindex(A, 1; α = 3.0)
     end
 
     @testset "no colelems" begin
@@ -124,6 +145,14 @@
         @test size(A) == (3, 0)
         @test_throws BoundsError A[]
         @test_throws BoundsError A[1]
+
+        A = InteractionMatrix(Int[42, 40, 47], Float64[], KwargsFun{Float64}(2.0))
+        @test A isa AbstractArray{Float64, 2}
+        @test size(A) == (3, 0)
+        @test_throws BoundsError A[]
+        @test_throws BoundsError A[1]
+        @test_throws BoundsError getindex(A; α = 3.0)
+        @test_throws BoundsError getindex(A, 1; α = 3.0)
     end
 
     @testset "single value" begin
@@ -222,6 +251,30 @@
         @test_throws CanonicalIndexError A[] = 13
         @test_throws CanonicalIndexError A[1] = 13
         @test_throws CanonicalIndexError A[1, 1] = 13
+
+        A = InteractionMatrix(Int[2], Float64[42], KwargsFun{Float64}(2.0))
+        @test A isa AbstractArray{Float64, 2}
+        @test size(A) == (1, 1)
+        @test A == 2 .* [46;;]
+        @test getindex(A, :; α = 3.0) == 3 .* [46]
+        @test getindex(A, :, :; α = 3.0) == 3 .* [46;;]
+        @test A[] isa Float64
+        @test A[] == 2 * 46
+        @test getindex(A; α = 3.0) == 3 * 46
+        @test A[1] isa Float64
+        @test A[1] == 92
+        @test getindex(A, 1; α = 3.0) == 3 * 46
+        @test A[1, 1] isa Float64
+        @test A[1, 1] == 92
+        @test getindex(A, 1, 1; α = 3.0) == 3 * 46
+        @test_throws BoundsError A[2]
+        @test_throws BoundsError getindex(A, 2; α = 3.0)
+        @test_throws BoundsError A[1, 2]
+        @test_throws BoundsError A[2, 1]
+        @test_throws BoundsError A[2, 2]
+        @test_throws BoundsError getindex(A, 1, 2; α = 3.0)
+        @test_throws BoundsError getindex(A, 2, 1; α = 3.0)
+        @test_throws BoundsError getindex(A, 2, 2; α = 3.0)
     end
 
     @testset "single rowelem" begin
@@ -346,6 +399,36 @@
         @test_throws BoundsError A[4]
         @test_throws BoundsError A[1, 4]
         @test_throws BoundsError A[2, 1]
+
+        A = InteractionMatrix(Int[2], Float64[42, 40, 47], KwargsFun{Float64}(2.0))
+        @test A isa AbstractArray{Float64, 2}
+        @test size(A) == (1, 3)
+        @test_throws BoundsError A[]
+        @test_throws BoundsError getindex(A; α = 3.0)
+        @test A[1] isa Float64
+        @test A[1] == 2 * 46
+        @test getindex(A, 1; α = 3.0) == 3 * 46
+        @test A[2] isa Float64
+        @test A[2] == 2 * 44
+        @test getindex(A, 2; α = 3.0) == 3 * 44
+        @test A[3] isa Float64
+        @test A[3] == 2 * 51
+        @test getindex(A, 3; α = 3.0) == 3 * 51
+        @test A[1, 1] isa Float64
+        @test A[1, 1] == 2 * 46
+        @test getindex(A, 1, 1; α = 3.0) == 3 * 46
+        @test A[1, 2] isa Float64
+        @test A[1, 2] == 2 * 44
+        @test getindex(A, 1, 2; α = 3.0) == 3 * 44
+        @test A[1, 3] isa Float64
+        @test A[1, 3] == 2 * 51
+        @test getindex(A, 1, 3; α = 3.0) == 3 * 51
+        @test_throws BoundsError A[4]
+        @test_throws BoundsError getindex(A, 4; α = 3.0)
+        @test_throws BoundsError A[1, 4]
+        @test_throws BoundsError A[2, 1]
+        @test_throws BoundsError getindex(A, 1, 4; α = 3.0)
+        @test_throws BoundsError getindex(A, 2, 1; α = 3.0)
     end
 
     @testset "single colelem" begin
@@ -470,6 +553,36 @@
         @test_throws BoundsError A[4]
         @test_throws BoundsError A[4, 1]
         @test_throws BoundsError A[1, 2]
+
+        A = InteractionMatrix(Int[42, 40, 47], Float64[2], KwargsFun{Float64}(2.0))
+        @test A isa AbstractArray{Float64, 2}
+        @test size(A) == (3, 1)
+        @test_throws BoundsError A[]
+        @test_throws BoundsError getindex(A; α = 3.0)
+        @test A[1] isa Float64
+        @test A[1] == 1766 * 2
+        @test getindex(A, 1; α = 3.0) == 1766 * 3
+        @test A[2] isa Float64
+        @test A[2] == 1602 * 2
+        @test getindex(A, 2; α = 3.0) == 1602 * 3
+        @test A[3] isa Float64
+        @test A[3] == 2211 * 2
+        @test getindex(A, 3; α = 3.0) == 2211 * 3
+        @test A[1, 1] isa Float64
+        @test A[1, 1] == 1766 * 2
+        @test getindex(A, 1, 1; α = 3.0) == 1766 * 3
+        @test A[2, 1] isa Float64
+        @test A[2, 1] == 1602 * 2
+        @test getindex(A, 2, 1; α = 3.0) == 1602 * 3
+        @test A[3, 1] isa Float64
+        @test A[3, 1] == 2211 * 2
+        @test getindex(A, 3, 1; α = 3.0) == 2211 * 3
+        @test_throws BoundsError A[4]
+        @test_throws BoundsError getindex(A, 4; α = 3.0)
+        @test_throws BoundsError A[4, 1]
+        @test_throws BoundsError A[1, 2]
+        @test_throws BoundsError getindex(A, 4, 1; α = 3.0)
+        @test_throws BoundsError getindex(A, 1, 2; α = 3.0)
     end
 
     @testset "ordinary" begin
@@ -632,5 +745,37 @@
         @test_throws BoundsError A[] = 13
         @test_throws CanonicalIndexError A[5] = 13
         @test_throws CanonicalIndexError A[2, 2] = 13
+
+        A = InteractionMatrix(Int[1, 2, 3], Float64[10, 20, 30], KwargsFun{Float64}(2.0))
+        @test A isa AbstractMatrix{Float64}
+        @test eltype(A) == Float64
+        @test size(A) == (3, 3)
+        @test A == 2 .* Float64[11 21 31; 14 24 34; 19 29 39]
+        @test A[:] == 2 .* Float64[11, 14, 19, 21, 24, 29, 31, 34, 39]
+        @test A[:, :] == 2 .* Float64[11 21 31; 14 24 34; 19 29 39]
+        @test getindex(A, :; α = 3.0) == 3 .* Float64[11, 14, 19, 21, 24, 29, 31, 34, 39]
+        @test getindex(A, :, :; α = 3.0) == 3 .* Float64[11 21 31; 14 24 34; 19 29 39]
+        @test A[A .> 50] == 2 .* Float64[29, 31, 34, 39]
+        @test getindex(A, A .> 50; α = 3.0) == 3 .* Float64[29, 31, 34, 39] # bitmask refers so non-kwargs getindex!
+        @test_throws BoundsError A[]
+        @test_throws BoundsError getindex(A; α = 3.0)
+        @test A[5] isa Float64
+        @test A[5] == 2 * 24
+        @test getindex(A, 5; α = 3.0) == 3 * 24
+        @test A[2, 2] isa Float64
+        @test A[2, 2] == 2 * 24
+        @test getindex(A, 2, 2; α = 3.0) == 3 * 24
+        @test A[[5]] isa Vector{Float64}
+        @test A[[5]] == Float64[2 * 24]
+        @test getindex(A, [5]; α = 3.0) == Float64[3 * 24]
+        @test A[[2], [2]] isa Matrix{Float64}
+        @test A[[2], [2]] == Float64[2 * 24;;]
+        @test getindex(A, [2], [2]; α = 3.0) == Float64[3 * 24;;]
+        @test_throws BoundsError A[10]
+        @test_throws BoundsError getindex(A, 10; α = 3.0)
+        @test_throws BoundsError A[4, 1]
+        @test_throws BoundsError A[1, 4]
+        @test_throws BoundsError getindex(A, 4, 1; α = 3.0)
+        @test_throws BoundsError getindex(A, 1, 4; α = 3.0)
     end
 end
