@@ -778,4 +778,16 @@
         @test_throws BoundsError getindex(A, 4, 1; α = 3.0)
         @test_throws BoundsError getindex(A, 1, 4; α = 3.0)
     end
+
+    @testset "views" begin
+        A = InteractionMatrix{Float64}(Int[1, 2, 3], Int[10, 20, 30], /)
+
+        @test view(A, :, :) isa AbstractMatrix{Float64}
+        @test view(A, :, :) == A
+        @test InteractionMatrix(A, :, :) isa AbstractMatrix{Float64}
+        @test InteractionMatrix(A, :, :) == view(A, :, :)
+        @test InteractionMatrix(A, :, 1:2) == view(A, :, 1:2)
+        @test InteractionMatrix(A, 2:3, :) == view(A, 2:3, :)
+        @test InteractionMatrix(A, [2], [2]) == view(A, [2], [2])
+    end
 end

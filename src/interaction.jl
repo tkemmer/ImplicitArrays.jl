@@ -78,6 +78,12 @@ Create an interaction matrix for the given (yet unused) row and column element a
 constant interaction function always returning `val`. In this form, the interaction matrix acts
 as a replacement for a two-dimensional [`FixedValueArray`](@ref).
 
+    InteractionMatrix(A::InteractionMatrix, rows, cols)
+
+Creates a view on a given interaction matrix similar to `view(A, rows, cols)`. In contrast to
+`Base.view`, this function returns an interaction matrix object rather than a wrapper of the
+original matrix.
+
 # Examples
 ```jldoctest; setup = :(using ImplicitArrays)
 julia> InteractionMatrix{Int64}([1, 2, 3], [10, 20, 30], +)
@@ -136,6 +142,11 @@ end
     colelems,
     ConstInteractionFunction{R, C, T}(val)
 )
+
+@inline InteractionMatrix(
+    A::InteractionMatrix,
+    I::Vararg{Any, 2}
+) = InteractionMatrix(vec(view(A.rowelems, I[1])), vec(view(A.colelems, I[2])), A.interact)
 
 @inline Base.size(
     A::InteractionMatrix
