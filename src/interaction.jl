@@ -150,4 +150,4 @@ end
     A::InteractionMatrix,
     ::Any,
     ::Int
-) = _throw_canonical_error("setindex!", typeof(A))
+) = throw(CanonicalIndexError("setindex!", typeof(A)))

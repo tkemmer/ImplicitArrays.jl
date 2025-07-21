@@ -52,11 +52,11 @@ end
 end
 
 @inline function Base.setindex!(A::FixedValueArray, ::Any, ::Int)
-    _throw_canonical_error("setindex!", typeof(A))
+    throw(CanonicalIndexError("setindex!", typeof(A)))
 end
 
 # This one is required to have setindex! at index [] throw a CanonicalIndexError instead
 # of a BoundsError (which is used for all other indices).
 @inline function Base.setindex!(A::FixedValueArray, ::Any, ::Vararg{Int})
-    _throw_canonical_error("setindex!", typeof(A))
+    throw(CanonicalIndexError("setindex!", typeof(A)))
 end
