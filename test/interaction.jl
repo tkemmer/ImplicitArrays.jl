@@ -327,5 +327,23 @@
         @test A[1, 2] == 8.4
         @test A[2, 2] isa Float64
         @test A[2, 2] == 8.0
+
+        A = InteractionMatrix{Float64}(view(Int[42, 40], :), view(Int[2, 5], :), /)
+        @test A[1] isa Float64
+        @test A[1] == 21.0
+        @test A[2] isa Float64
+        @test A[2] == 20.0
+        @test A[3] isa Float64
+        @test A[3] == 8.4
+        @test A[4] isa Float64
+        @test A[4] == 8.0
+        @test A[1, 1] isa Float64
+        @test A[1, 1] == 21.0
+        @test A[2, 1] isa Float64
+        @test A[2, 1] == 20.0
+        @test A[1, 2] isa Float64
+        @test A[1, 2] == 8.4
+        @test A[2, 2] isa Float64
+        @test A[2, 2] == 8.0
     end
 end

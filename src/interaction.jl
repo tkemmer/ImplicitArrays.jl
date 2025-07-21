@@ -81,13 +81,13 @@ as a replacement for a two-dimensional [`FixedValueArray`](@ref).
 # Examples
 ```jldoctest; setup = :(using ImplicitArrays)
 julia> InteractionMatrix{Int64}([1, 2, 3], [10, 20, 30], +)
-3×3 InteractionMatrix{Int64, Int64, Int64, GenericInteractionFunction{Int64, Int64, Int64}}:
+3×3 InteractionMatrix{Int64, Int64, Int64, GenericInteractionFunction{Int64, Int64, Int64}, Vector{Int64}, Vector{Int64}}:
  11  21  31
  12  22  32
  13  23  33
 
 julia> InteractionMatrix([1, 2, 3], [10, 20, 30], 42)
-3×3 InteractionMatrix{Int64, Int64, Int64, ConstInteractionFunction{Int64, Int64, Int64}}:
+3×3 InteractionMatrix{Int64, Int64, Int64, ConstInteractionFunction{Int64, Int64, Int64}, Vector{Int64}, Vector{Int64}}:
  42  42  42
  42  42  42
  42  42  42
@@ -97,29 +97,29 @@ julia> struct DivFun <: InteractionFunction{Int, Int, Float64} end
 julia> (::DivFun)(x::Int, y::Int) = x / y
 
 julia> InteractionMatrix([10, 20, 30], [5, 2, 1], DivFun())
-3×3 InteractionMatrix{Float64, Int64, Int64, DivFun}:
+3×3 InteractionMatrix{Float64, Int64, Int64, DivFun, Vector{Int64}, Vector{Int64}}:
  2.0   5.0  10.0
  4.0  10.0  20.0
  6.0  15.0  30.0
 ```
 """
-struct InteractionMatrix{T, R, C, F <: InteractionFunction{R, C, T}} <: AbstractArray{T, 2}
-    rowelems::Array{R, 1}
-    colelems::Array{C, 1}
+struct InteractionMatrix{T, R, C, F <: InteractionFunction{R, C, T}, RE <: AbstractVector{R}, CE <: AbstractVector{C}} <: AbstractArray{T, 2}
+    rowelems::RE
+    colelems::CE
     interact::F
 
     @inline function InteractionMatrix(
-        rowelems::Array{R, 1},
-        colelems::Array{C, 1},
+        rowelems::RE,
+        colelems::CE,
         interact::F
-    ) where {T, R, C, F <: InteractionFunction{R, C, T}}
-        new{T, R, C, F}(rowelems, colelems, interact)
+    ) where {T, R, C, F <: InteractionFunction{R, C, T}, RE <: AbstractVector{R}, CE <: AbstractVector{C}}
+        new{T, R, C, F, RE, CE}(rowelems, colelems, interact)
     end
 end
 
 @inline InteractionMatrix{T}(
-    rowelems::Array{R, 1},
-    colelems::Array{C, 1},
+    rowelems::AbstractVector{R},
+    colelems::AbstractVector{C},
     interact::Function
 ) where {T, R, C} = InteractionMatrix(
     rowelems,
@@ -128,8 +128,8 @@ end
 )
 
 @inline InteractionMatrix(
-    rowelems::Array{R, 1},
-    colelems::Array{C, 1},
+    rowelems::AbstractVector{R},
+    colelems::AbstractVector{C},
     val::T
 ) where {T, R, C} = InteractionMatrix(
     rowelems,
