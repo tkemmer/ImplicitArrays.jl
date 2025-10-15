@@ -1,6 +1,4 @@
 @testitem "InteractionMatrix" begin
-    include("compat.jl")
-
     struct SimpleFun <: InteractionFunction{Int, Float64, Float64} end
     (::SimpleFun)(r::Int, c::Float64) = r * r + c
 

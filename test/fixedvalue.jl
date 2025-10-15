@@ -1,6 +1,4 @@
 @testitem "FixedValueArray" begin
-    include("compat.jl")
-
     @testset "empty arrays" begin
         A = FixedValueArray(Nothing, 0)
         @test A isa FixedValueArray{DataType, 1}
