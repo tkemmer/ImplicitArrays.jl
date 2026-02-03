@@ -4,4 +4,3 @@ ImplicitArrays = "2c62951c-9479-4435-88c8-614a84373d38"
 
 [compat]
 Documenter = "1"
-julia = "1.6"
