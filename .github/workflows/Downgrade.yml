@@ -24,14 +24,13 @@ jobs:
         version:
           - 'lts'
           - '1.12'
-          - 'nightly'
         os:
           - ubuntu-latest
         arch:
           - x64
           - x86
         include:
-          - version: 'nightly'
+          - version: '1.12'
             experimental: true
     steps:
       - uses: actions/checkout@v6
