@@ -1,3 +1,8 @@
-using TestItemRunner
+using ParallelTestRunner
+import ImplicitArrays
 
-@run_package_tests verbose=true
+const init_code = quote
+    using ImplicitArrays
+end
+
+runtests(ImplicitArrays, ["--verbose", ARGS...]; init_code)
