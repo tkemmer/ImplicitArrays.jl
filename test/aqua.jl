@@ -1,5 +1,3 @@
-@testitem "Aqua" begin
-    using Aqua
+using Aqua
 
-    Aqua.test_all(ImplicitArrays)
-end
+Aqua.test_all(ImplicitArrays)
