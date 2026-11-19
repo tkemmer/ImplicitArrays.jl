@@ -1,4 +1,5 @@
-using Documenter, ImplicitArrays
+using ImplicitArrays
+using Documenter, DocumenterCodeBlocks
 
 const pages = [
     "Home" => "index.md",
@@ -15,7 +16,8 @@ makedocs(
     pages     = pages,
     format    = Documenter.HTML(),
     sitename  = "ImplicitArrays.jl",
-    repo      = Remotes.GitHub("tkemmer", "ImplicitArrays.jl")
+    repo      = Remotes.GitHub("tkemmer", "ImplicitArrays.jl"),
+    plugins   = [CodeBlocks()],
 )
 
 deploydocs(;
