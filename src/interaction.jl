@@ -182,9 +182,3 @@ end
     _getindex(A, Tuple(CartesianIndices(A)[i])...; kwargs...)
 @inline _getindex(A::InteractionMatrix{T}, i::Integer, j::Integer; kwargs...) where T =
     A.interact(A.rowelems[i], A.colelems[j]; kwargs...)::T
-
-@inline Base.setindex!(
-    A::InteractionMatrix,
-    ::Any,
-    ::Int
-) = throw(CanonicalIndexError("setindex!", typeof(A)))

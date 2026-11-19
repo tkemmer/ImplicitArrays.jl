@@ -169,6 +169,11 @@ end
     @test_throws CanonicalIndexError A[] = 13
     @test_throws CanonicalIndexError A[1] = 13
     @test_throws CanonicalIndexError A[1, 1] = 13
+    @test_throws CanonicalIndexError A[1:1] = [13]
+    @test_throws CanonicalIndexError A[:, 1] = [13]
+    @test_throws BoundsError A[2] = 13
+    @test_throws BoundsError A[2:2] = [13]
+    @test_throws BoundsError A[:, 2] = [13]
 
     A = InteractionMatrix{Int}(Int[2], Int[42], -)
     @test A isa AbstractArray{Int, 2}
