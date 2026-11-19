@@ -3,15 +3,19 @@
 ```
 # ImplicitArrays.jl
 
-The `ImplicitArrays.jl` package provides interaction matrices for the
+The `ImplicitArrays.jl` package provides interaction arrays for the
 [Julia](https://julialang.org) programming language.
 
 ## In a nutshell
 
-An interaction matrix `M` of size `n × m` consists of row elements `rᵢ`, column elements `cⱼ`,
-and an interaction function `f` such that `Mᵢⱼ = f(rᵢ, cⱼ)`. The matrix is stored implicitly:
-only the row elements, column elements, and interaction function are kept, while individual
+An interaction array `A` of size `n₁ × ... × nₙ` consists of axis elements `xᵢ` and an
+interaction function `f` such that `A[i₁, ..., iₙ] = f(x₁[i₁], ..., xₙ[iₙ])`. The array is
+stored implicitly: only the axis elements and interaction function are kept, while individual
 entries are computed on demand.
+
+The two-dimensional case is an interaction matrix `M` of size `n × m`, consisting of row
+elements `rᵢ`, column elements `cⱼ`, and an interaction function `f` such that
+`Mᵢⱼ = f(rᵢ, cⱼ)`. `InteractionMatrix` is an alias for the two-dimensional `InteractionArray`.
 
 ```jldoctest home
 julia> using ImplicitArrays
@@ -26,7 +30,7 @@ julia> M = InteractionMatrix{Int}([1, 2, 3], [10, 20, 30], +)
 Custom interaction functions are ordinary callable types:
 
 ```jldoctest home
-julia> struct DivFun <: InteractionFunction{Int, Int, Float64} end
+julia> struct DivFun <: InteractionFunction{Float64, Tuple{Int, Int}} end
 
 julia> (::DivFun)(x::Int, y::Int) = x / y
 
@@ -35,6 +39,19 @@ julia> InteractionMatrix([10, 20, 30], [5, 2, 1], DivFun())
  2.0   5.0  10.0
  4.0  10.0  20.0
  6.0  15.0  30.0
+```
+
+Arbitrarily many dimensions are supported by `InteractionArray`:
+
+```jldoctest home
+julia> struct Sum3 <: InteractionFunction{Int, Tuple{Int, Int, Int}} end
+
+julia> (::Sum3)(x::Int, y::Int, z::Int) = x + y + z
+
+julia> A = InteractionArray(([1, 2], [10, 20], [100, 200]), Sum3());
+
+julia> A[2, 2, 2]
+222
 ```
 
 ## Learn more

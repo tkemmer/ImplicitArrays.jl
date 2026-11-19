@@ -1,15 +1,15 @@
-struct SimpleFun <: InteractionFunction{Int, Float64, Float64} end
+struct SimpleFun <: InteractionFunction{Float64, Tuple{Int, Float64}} end
 (::SimpleFun)(r::Int, c::Float64) = r * r + c
 
-struct GenericFun{T <: AbstractFloat} <: InteractionFunction{Int, T, T} end
+struct GenericFun{T <: AbstractFloat} <: InteractionFunction{T, Tuple{Int, T}} end
 (::GenericFun{T})(r::Int, c::T) where T = r * r + c
 
-struct StatefulFun{T <: AbstractFloat} <: InteractionFunction{Int, T, T}
+struct StatefulFun{T <: AbstractFloat} <: InteractionFunction{T, Tuple{Int, T}}
     α::T
 end
 (f::StatefulFun{T})(r::Int, c::T) where T = f.α * (r * r + c)
 
-struct KwargsFun{T <: AbstractFloat} <: InteractionFunction{Int, T, T}
+struct KwargsFun{T <: AbstractFloat} <: InteractionFunction{T, Tuple{Int, T}}
     α::T
 end
 (f::KwargsFun{T})(r::Int, c::T; α::T = f.α) where T = α * (r * r + c)
@@ -914,4 +914,170 @@ end
 
     V = InteractionMatrix(A, 2:3, [1, 3])
     @test summary(V) == "2×2 InteractionMatrix{$(Int)}"
+end
+
+struct Sum3 <: InteractionFunction{Int, Tuple{Int, Int, Int}} end
+(::Sum3)(x::Int, y::Int, z::Int) = x + y + z
+
+@testset "InteractionArray 3-D" begin
+    xs = [1, 2]
+    ys = [10, 20]
+    zs = [100, 200]
+    A = InteractionArray((xs, ys, zs), Sum3())
+    B = [x + y + z for x in xs, y in ys, z in zs]
+
+    @test A isa AbstractArray{Int, 3}
+    @test A isa InteractionArray{Int, 3}
+    @test size(A) == (2, 2, 2)
+    @test eltype(A) == Int
+    @test ndims(A) == 3
+
+    @test A[2, 2, 2] == 222
+    @test A[5] == B[5]
+    @test A[2, :, 1] == B[2, :, 1]
+    @test A[:, :, 2] == B[:, :, 2]
+    @test A[:] == B[:]
+    @test A[CartesianIndex(2, 2, 2)] == 222
+    @test A[CartesianIndices(A)] == B
+    @test A[A .> 150] == B[B .> 150]
+
+    @test summary(A) == "2×2×2 InteractionArray{Int64}"
+    @test startswith(sprint(show, MIME"text/plain"(), A), "2×2×2 InteractionArray{Int64}:")
+
+    @test_throws CanonicalIndexError A[1, 1, 1] = 0
+    @test_throws BoundsError A[3, 1, 1]
+    @test_throws BoundsError A[1, 3, 1]
+    @test_throws BoundsError A[1, 1, 3]
+end
+
+@testset "InteractionArray constructors" begin
+    xs = [1, 2, 3]
+    ys = [10.0, 20.0]
+
+    A = InteractionArray{Float64}((xs, ys), (x, y) -> x + y)
+    @test A isa InteractionArray{Float64, 2}
+    @test A[2, 1] == 12.0
+    @test A[2, 1] isa Float64
+
+    C = InteractionArray((xs, ys), 42.0)
+    @test C isa InteractionArray{Float64, 2}
+    @test C[3, 2] == 42.0
+    @test all(==(42.0), C)
+
+    D = InteractionArray(
+        (xs, ys),
+        GenericInteractionFunction{Float64, Tuple{Int, Float64}}((x, y) -> x / y)
+    )
+    @test D isa InteractionArray{Float64, 2}
+    @test D[3, 2] == 0.15
+
+    E = InteractionArray(
+        (xs, ys),
+        ConstInteractionFunction{Float64, Tuple{Int, Float64}}(7.0)
+    )
+    @test E isa InteractionArray{Float64, 2}
+    @test E[1, 1] == 7.0
+
+    @test_throws ArgumentError InteractionArray((Int[], Float64[], Int[]), Sum3())
+end
+
+@testset "InteractionArray views" begin
+    xs = [1, 2, 3]
+    ys = [10, 20, 30]
+    zs = [100, 200, 300]
+    A = InteractionArray((xs, ys, zs), Sum3())
+
+    V = InteractionArray(A, 2:3, :, [2])
+    @test V isa InteractionArray{Int, 3}
+    @test size(V) == (2, 3, 1)
+    @test V[1, 1, 1] == A[2, 1, 2]
+    @test V[:, :, 1] == A[2:3, :, 2]
+    @test V.axiselems[1] == [2, 3]
+    @test V.axiselems[2] == [10, 20, 30]
+    @test V.axiselems[3] == [200]
+
+    W = InteractionArray(A, 2, 2, 2)
+    @test size(W) == (1, 1, 1)
+    @test W[] == 222
+end
+
+@testset "InteractionArray 1-D and 0-D" begin
+    A = InteractionArray(([1, 2, 3],), ConstInteractionFunction{Int, Tuple{Int}}(7))
+    @test A isa InteractionArray{Int, 1}
+    @test size(A) == (3,)
+    @test A[2] == 7
+    @test A[:] == [7, 7, 7]
+    @test summary(A) == "3-element InteractionArray{Int64}"
+
+    E = InteractionArray((Int[],), ConstInteractionFunction{Int, Tuple{Int}}(7))
+    @test E isa InteractionArray{Int, 1}
+    @test size(E) == (0,)
+    @test_throws BoundsError E[1]
+    @test summary(E) == "0-element InteractionArray{Int64}"
+
+    B = InteractionArray((), ConstInteractionFunction{Int, Tuple{}}(11))
+    @test B isa InteractionArray{Int, 0}
+    @test size(B) == ()
+    @test B[] == 11
+    @test summary(B) == "0-dimensional InteractionArray{Int64}"
+    @test_throws CanonicalIndexError B[] = 12
+end
+
+@testset "InteractionMatrix alias" begin
+    A = InteractionMatrix{Int}([1, 2, 3], [10, 20, 30], +)
+    @test A isa InteractionMatrix
+    @test A isa InteractionArray{Int, 2}
+    @test A isa InteractionArray
+    @test typeof(A) <: InteractionArray
+    @test A.rowelems == [1, 2, 3]
+    @test A.colelems == [10, 20, 30]
+    @test A.axiselems == ([1, 2, 3], [10, 20, 30])
+    @test propertynames(A) == (:rowelems, :colelems, :axiselems, :interact)
+
+    B = InteractionMatrix([1, 2, 3], [10, 20, 30], 42)
+    @test B isa InteractionMatrix
+    @test B[2, 3] == 42
+
+    C = InteractionMatrix(
+        [10, 20],
+        [5, 2],
+        GenericInteractionFunction{Float64, Tuple{Int, Int}}(/)
+    )
+    @test C isa InteractionMatrix
+    @test C[1, 1] == 2.0
+
+    D = InteractionMatrix(
+        [10, 20],
+        [5, 2],
+        ConstInteractionFunction{Float64, Tuple{Int, Int}}(7.0)
+    )
+    @test D isa InteractionMatrix
+    @test D[1, 1] == 7.0
+
+    E = InteractionMatrix(A, 2:3, [1, 3])
+    @test E isa InteractionMatrix
+    @test size(E) == (2, 2)
+    @test E[1, 1] == A[2, 1]
+
+    F = GenericInteractionFunction{Int, Tuple{Int, Int}}
+    G = InteractionMatrix{Int, Int, Int, F, Vector{Int}, Vector{Int}}(
+        [1, 2],
+        [10, 20],
+        F(+)
+    )
+    @test G isa InteractionMatrix
+    @test G[2, 2] == 22
+
+    H = InteractionMatrix{Int}([1, 2], [10, 20], F(+))
+    @test H isa InteractionMatrix
+    @test H[2, 2] == 22
+end
+
+@testset "InteractionFunction type parameter order" begin
+    @test SimpleFun() isa InteractionFunction{Float64, Tuple{Int, Float64}}
+    @test GenericFun{Float64}() isa InteractionFunction{Float64, Tuple{Int, Float64}}
+    @test ConstInteractionFunction{Int, Tuple{Int, Int}}(42) isa
+        InteractionFunction{Int, Tuple{Int, Int}}
+    @test GenericInteractionFunction{Int, Tuple{Int, Int}}(+) isa
+        InteractionFunction{Int, Tuple{Int, Int}}
 end

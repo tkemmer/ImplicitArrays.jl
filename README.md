@@ -5,10 +5,10 @@
 [![](https://img.shields.io/badge/docs-dev-blue.svg?style=for-the-badge)](https://tkemmer.github.io/ImplicitArrays.jl/dev)
 
 
-The `ImplicitArrays.jl` package provides interaction matrices for the [Julia](https://julialang.org) programming language.
+The `ImplicitArrays.jl` package provides interaction arrays for the [Julia](https://julialang.org) programming language.
 
-## Interaction matrices
-An interaction matrix `M` of size `n × m` consists of row elements `rᵢ`, column elements `cⱼ`, and an interaction function `f` such that `Mᵢⱼ = f(rᵢ, cⱼ)`. The matrix is stored implicitly: only the row elements, column elements, and interaction function are kept, while individual entries are computed on demand.
+## Interaction arrays
+An interaction array `A` of size `n₁ × ... × nₙ` consists of axis elements `xᵢ` and an interaction function `f` such that `A[i₁, ..., iₙ] = f(x₁[i₁], ..., xₙ[iₙ])`. The array is stored implicitly: only the axis elements and interaction function are kept, while individual entries are computed on demand. The two-dimensional case is an interaction matrix, for which `InteractionMatrix` is provided as an alias. The main types are `InteractionArray`, `InteractionMatrix`, and `InteractionFunction`:
 
 ```julia
 julia> using ImplicitArrays
@@ -23,7 +23,7 @@ julia> InteractionMatrix{Int}([1, 2, 3], [10, 20, 30], +)
 Custom interaction functions are ordinary callable types:
 
 ```julia
-julia> struct DivFun <: InteractionFunction{Int, Int, Float64} end
+julia> struct DivFun <: InteractionFunction{Float64, Tuple{Int, Int}} end
 
 julia> (::DivFun)(x::Int, y::Int) = x / y
 
@@ -34,7 +34,20 @@ julia> InteractionMatrix([10, 20, 30], [5, 2, 1], DivFun())
  6.0  15.0  30.0
 ```
 
-See the [interaction matrix documentation](https://tkemmer.github.io/ImplicitArrays.jl/dev/interaction/) for a detailed guide and more examples.
+Arbitrarily many dimensions are supported by `InteractionArray`:
+
+```julia
+julia> struct Sum3 <: InteractionFunction{Int, Tuple{Int, Int, Int}} end
+
+julia> (::Sum3)(x::Int, y::Int, z::Int) = x + y + z
+
+julia> A = InteractionArray(([1, 2], [10, 20], [100, 200]), Sum3());
+
+julia> A[2, 2, 2]
+222
+```
+
+See the [interaction array documentation](https://tkemmer.github.io/ImplicitArrays.jl/dev/interaction/) for a detailed guide and more examples.
 
 ## Deprecated types
 The following legacy implicit array types are obsolete and deprecated. They are retained for backward compatibility only and will be removed in a future release. New code should use the recommended replacements instead:
