@@ -8,7 +8,7 @@
 The `ImplicitArrays.jl` package provides interaction matrices for the [Julia](https://julialang.org) programming language.
 
 ## Interaction matrices
-An interaction matrix `M` of size `n × m` consists of row elements `rᵢ`, column elements `cⱼ`, and an interaction function `f` such that `Mᵢⱼ = f(rᵢ, cⱼ)`. The main types are `InteractionMatrix` and `InteractionFunction`:
+An interaction matrix `M` of size `n × m` consists of row elements `rᵢ`, column elements `cⱼ`, and an interaction function `f` such that `Mᵢⱼ = f(rᵢ, cⱼ)`. The matrix is stored implicitly: only the row elements, column elements, and interaction function are kept, while individual entries are computed on demand.
 
 ```julia
 julia> using ImplicitArrays
@@ -19,6 +19,8 @@ julia> InteractionMatrix{Int}([1, 2, 3], [10, 20, 30], +)
  12  22  32
  13  23  33
 ```
+
+Custom interaction functions are ordinary callable types:
 
 ```julia
 julia> struct DivFun <: InteractionFunction{Int, Int, Float64} end
@@ -46,16 +48,14 @@ The following legacy implicit array types are obsolete and deprecated. They are 
 See the [historic types documentation](https://tkemmer.github.io/ImplicitArrays.jl/dev/historic/) for details.
 
 ## Installation
-In the Julia shell, switch to the
-`Pkg` shell by pressing `]` and enter the following command:
+In the Julia REPL, switch to the `Pkg` mode by pressing `]` and enter the following command:
 
 ```sh
 pkg> add ImplicitArrays
 ```
 
 ## Testing
-`ImplicitArrays.jl` provides tests for most of its functions. You can run the test suite with the
-following command in the `Pkg` shell:
+`ImplicitArrays.jl` provides tests for its exported API. You can run the test suite yourself with the following command in `Pkg` mode:
 ```sh
 pkg> test ImplicitArrays
 ```
@@ -63,6 +63,7 @@ pkg> test ImplicitArrays
 ## Citing
 If you use `ImplicitArrays.jl` in your research, please cite the following publication:
 > Kemmer, T (2021). Space-efficient and exact system representations for the nonlocal protein
-> electrostatics problem. Ph. D. thesis, Johannes Gutenberg University Mainz. Mainz, Germany.
+> electrostatics problem. PhD thesis, Johannes Gutenberg University Mainz. Mainz, Germany.
+> <http://doi.org/10.25358/openscience-5689>
 
 Citation items for BibTeX can be found in [CITATION.bib](https://github.com/tkemmer/ImplicitArrays.jl/blob/master/CITATION.bib).
