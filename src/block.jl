@@ -3,6 +3,12 @@
 
 Implicit block matrix of equally-sized matrices with elements of type `T`.
 
+!!! warning "Deprecated"
+    `BlockMatrix` is deprecated and will be removed in a future release. Use
+    [`BlockArrays.jl`](https://github.com/JuliaArrays/BlockArrays.jl) instead, e.g.
+    `BlockArrays.mortar` for equally-sized blocks or `BlockArrays.BlockArray` for general
+    block structures.
+
 # Constructors
     BlockMatrix(blocks)
     BlockMatrix{T}(blocks)
@@ -41,6 +47,11 @@ struct BlockMatrix{T} <: AbstractArray{T, 2}
     function BlockMatrix{T}(
         blocks::Array{AbstractArray{T, 2}, 2}
     ) where T
+        Base.depwarn(
+            "`BlockMatrix` is deprecated and will be removed in a future release; " *
+            "use BlockArrays.jl (e.g. `BlockArrays.BlockArray` or `BlockArrays.mortar`) instead.",
+            :BlockMatrix
+        )
         bdims = (1, 1)
         for (i, block) ∈ enumerate(blocks)
             i > 1 && @assert(

@@ -3,6 +3,10 @@
 
 Implicit vector projecting a sequence of rows of a given vector with elements of type `T`.
 
+!!! warning "Deprecated"
+    `RowProjectionVector` is deprecated and will be removed in a future release. Use
+    `Base.view`/`@view` with a vector of row indices instead, e.g. `@view v[rows]`.
+
 # Constructors
     RowProjectionVector(base, rows)
     RowProjectionVector(base, rows...)
@@ -45,6 +49,11 @@ struct RowProjectionVector{T, A <: AbstractArray{T, 1}} <: AbstractArray{T, 1}
         base::A,
         rows::Vector{Int}
     ) where {T, A <: AbstractArray{T, 1}}
+        Base.depwarn(
+            "`RowProjectionVector` is deprecated and will be removed in a future release; " *
+            "use `view`/`@view` with a vector of row indices instead (e.g. `@view v[rows]`).",
+            :RowProjectionVector
+        )
         @boundscheck _checkrowbounds(base, rows)
         new(base, rows)
     end
@@ -82,6 +91,10 @@ end
     RowProjectionMatrix{T} <: AbstractArray{T, 2}
 
 Implicit matrix projecting a sequence of rows of a given matrix with elements of type `T`.
+
+!!! warning "Deprecated"
+    `RowProjectionMatrix` is deprecated and will be removed in a future release. Use
+    `Base.view`/`@view` with a vector of row indices instead, e.g. `@view A[rows, :]`.
 
 # Constructors
     RowProjectionMatrix(base, rows)
@@ -124,6 +137,11 @@ struct RowProjectionMatrix{T, A <: AbstractArray{T, 2}} <: AbstractArray{T, 2}
         base::A,
         rows::Vector{Int}
     ) where {T, A <: AbstractArray{T, 2}}
+        Base.depwarn(
+            "`RowProjectionMatrix` is deprecated and will be removed in a future release; " *
+            "use `view`/`@view` with a vector of row indices instead (e.g. `@view A[rows, :]`).",
+            :RowProjectionMatrix
+        )
         @boundscheck _checkrowbounds(base, rows)
         new(base, rows)
     end

@@ -1,7 +1,8 @@
 using Documenter, ImplicitArrays
 
 const pages = [
-    "Home" => "index.md"
+    "Home" => "index.md",
+    "Historic types" => "historic.md"
 ]
 
 makedocs(

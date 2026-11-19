@@ -3,6 +3,10 @@
 
 Implicit and arbitrarily-sized array with a common value of type `T` for all elements.
 
+!!! warning "Deprecated"
+    `FixedValueArray` is deprecated and will be removed in a future release. Use
+    [`FillArrays.Fill`](https://github.com/JuliaArrays/FillArrays.jl) instead.
+
 # Constructors
     FixedValueArray(val, dims)
     FixedValueArray(val, dims...)
@@ -35,7 +39,22 @@ struct FixedValueArray{T, N} <: AbstractArray{T, N}
     val::T
     "Array dimensions"
     dims::NTuple{N, Int}
+
+    function FixedValueArray{T, N}(
+        val,
+        dims::NTuple{N, Int}
+    ) where {T, N}
+        Base.depwarn(
+            "`FixedValueArray` is deprecated and will be removed in a future release; " *
+            "use `FillArrays.Fill` from FillArrays.jl instead.",
+            :FixedValueArray
+        )
+        new{T, N}(val, dims)
+    end
 end
+
+@inline FixedValueArray(val::T, dims::NTuple{N, Int}) where {T, N} =
+    FixedValueArray{T, N}(val, dims)
 
 @inline FixedValueArray(val::Any, dims::Int...) = FixedValueArray(val, dims)
 

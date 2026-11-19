@@ -76,7 +76,8 @@ Create an interaction matrix for the given row and column element arrays as well
 
 Create an interaction matrix for the given (yet unused) row and column element arrays and a
 constant interaction function always returning `val`. In this form, the interaction matrix acts
-as a replacement for a two-dimensional [`FixedValueArray`](@ref).
+as a replacement for a two-dimensional fixed-value array such as `FillArrays.Fill` from
+FillArrays.jl.
 
     InteractionMatrix(A::InteractionMatrix, rows, cols)
 
