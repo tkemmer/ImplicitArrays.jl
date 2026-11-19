@@ -34,7 +34,7 @@ julia> InteractionMatrix([10, 20, 30], [5, 2, 1], DivFun())
  6.0  15.0  30.0
 ```
 
-See the [documentation](https://tkemmer.github.io/ImplicitArrays.jl/dev) for details and more examples.
+See the [interaction matrix documentation](https://tkemmer.github.io/ImplicitArrays.jl/dev/interaction/) for a detailed guide and more examples.
 
 ## Deprecated types
 The following legacy implicit array types are obsolete and deprecated. They are retained for backward compatibility only and will be removed in a future release. New code should use the recommended replacements instead:

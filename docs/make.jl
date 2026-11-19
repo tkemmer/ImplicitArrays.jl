@@ -2,6 +2,7 @@ using Documenter, ImplicitArrays
 
 const pages = [
     "Home" => "index.md",
+    "Interaction matrices" => "interaction.md",
     "Historic types" => "historic.md"
 ]
 
