@@ -891,3 +891,22 @@ end
     @test getindex(A, [1 2; 1 2], [1 2; 1 2]; α = 3.0) == M[[1 2; 1 2], [1 2; 1 2]]
     @test getindex(A, A .> 50; α = 3.0) == 3 .* Float64[29, 31, 34, 39]
 end
+
+@testset "summary" begin
+    A = InteractionMatrix{Int}([1, 2, 3], [10, 20, 30], +)
+    @test summary(A) == "3×3 InteractionMatrix{$(Int)}"
+    @test startswith(sprint(show, MIME"text/plain"(), A), "3×3 InteractionMatrix{$(Int)}:")
+
+    B = InteractionMatrix(Int[1, 2, 3], Float64[10, 20, 30], SimpleFun())
+    @test summary(B) == "3×3 InteractionMatrix{Float64}"
+    @test startswith(sprint(show, MIME"text/plain"(), B), "3×3 InteractionMatrix{Float64}:")
+
+    C = InteractionMatrix([1, 2, 3], [10, 20, 30], 42)
+    @test summary(C) == "3×3 InteractionMatrix{$(Int)}"
+
+    E = InteractionMatrix(Int[], Int[], 11)
+    @test summary(E) == "0×0 InteractionMatrix{$(Int)}"
+
+    V = InteractionMatrix(A, 2:3, [1, 3])
+    @test summary(V) == "2×2 InteractionMatrix{$(Int)}"
+end
