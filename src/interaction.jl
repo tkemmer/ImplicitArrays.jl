@@ -153,16 +153,31 @@ end
     A::InteractionMatrix
 ) = (length(A.rowelems), length(A.colelems))
 
-@inline function Base.getindex(A::InteractionMatrix, I...; kwargs...)
-    @boundscheck checkbounds(A, I...)
-    @inbounds _getindex(A, to_indices(A, I)...; kwargs...)
+# Wrapper that delegates non-scalar indexing to Base's generic AbstractArray implementation.
+# This guarantees that mixed scalar/range indexing, multidimensional index arrays, trailing
+# singleton dimensions, and other standard `getindex` forms behave like a regular array.
+struct _InteractionMatrixIndexer{T, K, A <: InteractionMatrix{T}} <: AbstractArray{T, 2}
+    A::A
+    kwargs::K
 end
 
+@inline Base.size(w::_InteractionMatrixIndexer) = size(w.A)
+@inline Base.axes(w::_InteractionMatrixIndexer) = axes(w.A)
+@inline Base.IndexStyle(::Type{<:_InteractionMatrixIndexer}) = IndexCartesian()
+
+@inline Base.getindex(w::_InteractionMatrixIndexer, i::Int) =
+    _getindex(w.A, i; w.kwargs...)
+@inline Base.getindex(w::_InteractionMatrixIndexer, i::Int, j::Int) =
+    _getindex(w.A, i, j; w.kwargs...)
+
+@inline Base.getindex(A::InteractionMatrix, I...; kwargs...) =
+    getindex(_InteractionMatrixIndexer(A, kwargs), I...)
+
 @inline _getindex(A::InteractionMatrix; kwargs...) = _getindex(A, 1, 1; kwargs...)
-@inline _getindex(A::InteractionMatrix, i::Integer; kwargs...) = _getindex(A, Tuple(CartesianIndices(A)[i])...; kwargs...)
-@inline _getindex(A::InteractionMatrix{T}, I::AbstractArray; kwargs...) where T = collect(T, getindex(A, i; kwargs...) for i in I)
-@inline _getindex(A::InteractionMatrix{T}, i::Integer, j::Integer; kwargs...) where T = A.interact(A.rowelems[i], A.colelems[j]; kwargs...)::T
-@inline _getindex(A::InteractionMatrix{T}, I::AbstractVector, J::AbstractVector; kwargs...) where T = collect(T, _getindex(A, i, j; kwargs...) for i in I, j in J)
+@inline _getindex(A::InteractionMatrix, i::Integer; kwargs...) =
+    _getindex(A, Tuple(CartesianIndices(A)[i])...; kwargs...)
+@inline _getindex(A::InteractionMatrix{T}, i::Integer, j::Integer; kwargs...) where T =
+    A.interact(A.rowelems[i], A.colelems[j]; kwargs...)::T
 
 @inline Base.setindex!(
     A::InteractionMatrix,

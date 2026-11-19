@@ -787,3 +787,107 @@ end
     @test InteractionMatrix(A, 2:3, :) == view(A, 2:3, :)
     @test InteractionMatrix(A, [2], [2]) == view(A, [2], [2])
 end
+
+@testset "getindex parity" begin
+    A = InteractionMatrix{Int}([1, 2, 3], [10, 20, 30], +)
+    B = collect(A)
+    mask = BitVector([true, false, true, false, true, false, true, false, true])
+    mask3 = BitVector([true, false, true])
+    bitmask = BitMatrix([true false true; false true false; true false true])
+
+    indexing_forms = (
+        X -> X[1, :],
+        X -> X[:, 2],
+        X -> X[1, 1:2],
+        X -> X[1:2, 2],
+        X -> X[1, [1, 2]],
+        X -> X[[1, 2], 2],
+        X -> X[begin, :],
+        X -> X[:, end],
+        X -> X[1:0, 1],
+        X -> X[1, 1:0],
+        X -> X[1:2, 1:2],
+        X -> X[1:2, :],
+        X -> X[:, 1:2],
+        X -> X[:, :],
+        X -> X[[1, 2], [1, 2]],
+        X -> X[1:2, [1, 2]],
+        X -> X[[1, 2], 1:2],
+        X -> X[[1 2; 1 2], [1 2; 1 2]],
+        X -> X[1:2, [1 2; 1 2]],
+        X -> X[[1 2; 1 2], 1:2],
+        X -> X[[1 2; 1 2], 1],
+        X -> X[1, [1 2; 1 2]],
+        X -> X[1, 2, 1],
+        X -> X[1:2, 1:2, 1],
+        X -> X[1:2, 1:2, :],
+        X -> X[1:2, 1:2, 1:1],
+        X -> X[1, 2, 1, 1],
+        X -> X[1:2, 1:2, 1, 1],
+        X -> X[1:2, 1:2, 1:1, 1:1],
+        X -> X[CartesianIndex(1, 2)],
+        X -> X[CartesianIndex.(1:2, 1:2)],
+        X -> X[[CartesianIndex(1, 1), CartesianIndex(2, 2)]],
+        X -> X[CartesianIndices(X)],
+        X -> X[1:2, CartesianIndex(1, 1)],
+        X -> X[:],
+        X -> X[LinearIndices(X)],
+        X -> X[axes(X)...],
+        X -> X[begin:end],
+        X -> X[mask],
+        X -> X[bitmask],
+        X -> X[mask3, 1:2],
+        X -> X[1:2, mask3],
+        X -> X[mask3, mask3],
+        X -> X[X .> 20],
+    )
+
+    for f in indexing_forms
+        a = f(A)
+        b = f(B)
+        @test a == b
+        @test typeof(a) == typeof(b)
+        @test size(a) == size(b)
+    end
+
+    idx = eachindex(A)
+    @test A[idx] == B[idx]
+    @test typeof(A[idx]) == typeof(B[idx])
+    @test size(A[idx]) == size(B[idx])
+
+    @test_throws BoundsError A[1, 4]
+    @test_throws BoundsError A[4, 1]
+    @test_throws BoundsError A[1, 1:4]
+    @test_throws BoundsError A[1:4, 1]
+    @test_throws BoundsError A[1, [1, 4]]
+    @test_throws BoundsError A[[1, 4], 1]
+    @test_throws BoundsError A[1, 2, 2]
+    @test_throws BoundsError A[1:2, 1:2, 2]
+    @test_throws BoundsError A[1:2, 1:2, 1:2]
+    @test_throws BoundsError A[CartesianIndex(1, 1), 1:2]
+end
+
+@testset "getindex parity with kwargs" begin
+    A = InteractionMatrix(Int[1, 2, 3], Float64[10, 20, 30], KwargsFun{Float64}(2.0))
+    M = 3 .* Float64[11 21 31; 14 24 34; 19 29 39]
+
+    @test getindex(A, 1, :; α = 3.0) == 3 .* Float64[11, 21, 31]
+    @test getindex(A, :, 2; α = 3.0) == 3 .* Float64[21, 24, 29]
+    @test getindex(A, 1, 1:2; α = 3.0) == 3 .* Float64[11, 21]
+    @test getindex(A, 1:2, 2; α = 3.0) == 3 .* Float64[21, 24]
+    @test getindex(A, 1, [1 2; 1 2]; α = 3.0) == 3 .* Float64[11 21; 11 21]
+    @test getindex(A, [1 2; 1 2], 1; α = 3.0) == 3 .* Float64[11 14; 11 14]
+    @test getindex(A, 1:2, 1:2, 1; α = 3.0) == 3 .* Float64[11 21; 14 24]
+    @test getindex(A, 1:2, 1:2, :; α = 3.0) == 3 .* reshape(Float64[11 21; 14 24], 2, 2, 1)
+    @test getindex(A, 1, 2, 1; α = 3.0) == 3 * 21
+    @test getindex(A, 1, 2, 1, 1; α = 3.0) == 3 * 21
+    @test getindex(A, CartesianIndex(1, 2); α = 3.0) == 3 * 21
+    @test getindex(A, CartesianIndex.(1:2, 1:2); α = 3.0) == 3 .* Float64[11, 24]
+    @test getindex(A, [CartesianIndex(1, 1), CartesianIndex(2, 2)]; α = 3.0) == 3 .* Float64[11, 24]
+    @test getindex(A, 1:2, CartesianIndex(1, 1); α = 3.0) == 3 .* Float64[11, 14]
+    @test getindex(A, :; α = 3.0) == 3 .* Float64[11, 14, 19, 21, 24, 29, 31, 34, 39]
+    @test getindex(A, :, :; α = 3.0) == M
+    @test getindex(A, CartesianIndices(A); α = 3.0) == M
+    @test getindex(A, [1 2; 1 2], [1 2; 1 2]; α = 3.0) == M[[1 2; 1 2], [1 2; 1 2]]
+    @test getindex(A, A .> 50; α = 3.0) == 3 .* Float64[29, 31, 34, 39]
+end
