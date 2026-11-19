@@ -9,7 +9,7 @@ makedocs(
     modules   = [ImplicitArrays],
     clean     = true,
     doctest   = true,
-    linkcheck = true,
+    linkcheck = get(ENV, "CI", nothing) == "true",
     checkdocs = :all,
     pages     = pages,
     format    = Documenter.HTML(),
