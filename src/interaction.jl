@@ -116,6 +116,8 @@ julia> A[2, :, 1]
  122
 ```
 """
+@inline _axis_types(axiselems::Tuple) = Tuple{map(eltype, axiselems)...}
+
 struct InteractionArray{
     T,
     N,
@@ -136,17 +138,20 @@ struct InteractionArray{
         F <: InteractionFunction{T, R},
         AE <: NTuple{N, AbstractVector}
     }
-        for i in 1:N
-            eltype(axiselems[i]) <: R.parameters[i] || throw(ArgumentError(
-                "axis element array $i has element type $(eltype(axiselems[i])), " *
-                "which is not a subtype of $(R.parameters[i])"
-            ))
+        # The type-level check folds to a constant for well-typed arrays, so validation
+        # is free in the common case. The loop below only runs (and only produces the
+        # detailed per-axis message) when the check fails.
+        if !(_axis_types(axiselems) <: R)
+            for i in 1:N
+                eltype(axiselems[i]) <: R.parameters[i] || throw(ArgumentError(
+                    "axis element array $i has element type $(eltype(axiselems[i])), " *
+                    "which is not a subtype of $(R.parameters[i])"
+                ))
+            end
         end
         new{T, N, R, F, AE}(axiselems, interact)
     end
 end
-
-@inline _axis_types(axiselems::Tuple) = Tuple{map(eltype, axiselems)...}
 
 @inline InteractionArray(
     axiselems::AE,
