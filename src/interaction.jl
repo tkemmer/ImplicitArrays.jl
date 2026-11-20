@@ -70,6 +70,8 @@ struct GenericInteractionFunction{T, R <: Tuple} <: InteractionFunction{T, R}
 end
 @inline (f::GenericInteractionFunction{T})(args...) where T = f.f(args...)::T
 
+@inline _axis_types(axiselems::Tuple) = Tuple{map(eltype, axiselems)...}
+
 """
     InteractionArray{T, N, R, F, AE} <: AbstractArray{T, N}
 
@@ -116,8 +118,6 @@ julia> A[2, :, 1]
  122
 ```
 """
-@inline _axis_types(axiselems::Tuple) = Tuple{map(eltype, axiselems)...}
-
 struct InteractionArray{
     T,
     N,
