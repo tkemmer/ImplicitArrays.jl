@@ -12,6 +12,10 @@ The matrix is stored implicitly: only the row elements, column elements, and the
 interaction function are kept. Individual entries are computed on demand, so an
 `n × m` interaction matrix does not require `n × m` storage.
 
+More generally, an interaction array `A` of size `n₁ × ... × nₙ` consists of lists of axis
+elements `xᵢ ∈ Rᵢ` and an interaction function `f: R₁ × ... × Rₙ → T`. `InteractionMatrix` is
+an alias for the two-dimensional `InteractionArray`.
+
 Interaction matrices are read-only. Attempting to assign to an entry throws a
 `CanonicalIndexError`; invalid index expressions may still throw `BoundsError`.
 
@@ -63,11 +67,11 @@ julia> InteractionMatrix([1, 2, 3], [10, 20, 30], 42)
 
 ### Custom interaction functions
 
-An interaction function is any subtype of `InteractionFunction{R, C, T}` that implements
-`(f::MyFun)(r::R, c::C)::T`. A typical example is a pairwise distance matrix:
+An interaction function is any subtype of `InteractionFunction{T, Tuple{R, C}}` that
+implements `(f::MyFun)(r::R, c::C)::T`. A typical example is a pairwise distance matrix:
 
 ```jldoctest interaction
-julia> struct Distance <: InteractionFunction{Float64, Float64, Float64} end
+julia> struct Distance <: InteractionFunction{Float64, Tuple{Float64, Float64}} end
 
 julia> (::Distance)(x::Float64, y::Float64) = abs(x - y)
 
@@ -91,7 +95,7 @@ Interaction functions can carry parameters. For example, a scaled interaction ca
 factor `α`:
 
 ```jldoctest interaction
-julia> struct ScaleFun{T} <: InteractionFunction{Int, T, T}
+julia> struct ScaleFun{T} <: InteractionFunction{T, Tuple{Int, T}}
            α::T
        end
 
@@ -109,7 +113,7 @@ If an interaction function accepts keyword arguments, they can be forwarded thro
 `getindex`:
 
 ```jldoctest interaction
-julia> struct KwargsFun{T} <: InteractionFunction{Int, T, T}
+julia> struct KwargsFun{T} <: InteractionFunction{T, Tuple{Int, T}}
            α::T
        end
 
@@ -123,6 +127,33 @@ julia> K[1, 2]
 julia> getindex(K, 1, 2; α = 3.0)
 63.0
 ```
+
+## Higher-dimensional interaction arrays
+
+`InteractionArray` generalizes interaction matrices to arbitrarily many dimensions. Its
+constructor takes a tuple of axis element arrays and an interaction function:
+
+```jldoctest interaction
+julia> struct Sum3 <: InteractionFunction{Int, Tuple{Int, Int, Int}} end
+
+julia> (::Sum3)(x::Int, y::Int, z::Int) = x + y + z
+
+julia> A = InteractionArray(([1, 2], [10, 20], [100, 200]), Sum3());
+
+julia> size(A)
+(2, 2, 2)
+
+julia> A[2, 2, 2]
+222
+
+julia> A[2, :, 1]
+2-element Vector{Int64}:
+ 112
+ 122
+```
+
+`InteractionArray(A, inds...)` creates a view on a subset of the axis elements, analogous to
+`InteractionMatrix(A, rows, cols)` for matrices.
 
 ## Working with an interaction matrix
 
@@ -236,8 +267,9 @@ matrix is needed.
     GenericInteractionFunction
 ```
 
-### Interaction matrix type
+### Interaction array types
 
 ```@docs
+    InteractionArray
     InteractionMatrix
 ```
