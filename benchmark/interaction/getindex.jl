@@ -1,4 +1,4 @@
-struct KwargsFun{T} <: InteractionFunction{Int, T, T}
+struct KwargsFun{T} <: InteractionFunction{T, Tuple{Int, T}}
     α::T
 end
 (f::KwargsFun{T})(x::Int, y::T; α::T = f.α) where T = α * (x + y)

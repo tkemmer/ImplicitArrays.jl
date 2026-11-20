@@ -1,7 +1,7 @@
-struct Distance{T} <: InteractionFunction{T, T, T} end
+struct Distance{T} <: InteractionFunction{T, Tuple{T, T}} end
 (::Distance{T})(x::T, y::T) where T = sqrt(x * x + y * y)
 
-struct ScaleFun{T} <: InteractionFunction{T, T, T}
+struct ScaleFun{T} <: InteractionFunction{T, Tuple{T, T}}
     α::T
 end
 (f::ScaleFun{T})(x::T, y::T) where T = f.α * (x + y)
