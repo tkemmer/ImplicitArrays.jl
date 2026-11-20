@@ -941,8 +941,8 @@ struct Sum3 <: InteractionFunction{Int, Tuple{Int, Int, Int}} end
     @test A[CartesianIndices(A)] == B
     @test A[A .> 150] == B[B .> 150]
 
-    @test summary(A) == "2×2×2 InteractionArray{Int64}"
-    @test startswith(sprint(show, MIME"text/plain"(), A), "2×2×2 InteractionArray{Int64}:")
+    @test summary(A) == "2×2×2 InteractionArray{$(Int)}"
+    @test startswith(sprint(show, MIME"text/plain"(), A), "2×2×2 InteractionArray{$(Int)}:")
 
     @test_throws CanonicalIndexError A[1, 1, 1] = 0
     @test_throws BoundsError A[3, 1, 1]
@@ -1007,19 +1007,19 @@ end
     @test size(A) == (3,)
     @test A[2] == 7
     @test A[:] == [7, 7, 7]
-    @test summary(A) == "3-element InteractionArray{Int64}"
+    @test summary(A) == "3-element InteractionArray{$(Int)}"
 
     E = InteractionArray((Int[],), ConstInteractionFunction{Int, Tuple{Int}}(7))
     @test E isa InteractionArray{Int, 1}
     @test size(E) == (0,)
     @test_throws BoundsError E[1]
-    @test summary(E) == "0-element InteractionArray{Int64}"
+    @test summary(E) == "0-element InteractionArray{$(Int)}"
 
     B = InteractionArray((), ConstInteractionFunction{Int, Tuple{}}(11))
     @test B isa InteractionArray{Int, 0}
     @test size(B) == ()
     @test B[] == 11
-    @test summary(B) == "0-dimensional InteractionArray{Int64}"
+    @test summary(B) == "0-dimensional InteractionArray{$(Int)}"
     @test_throws CanonicalIndexError B[] = 12
 end
 
